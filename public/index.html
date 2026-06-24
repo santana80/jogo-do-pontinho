@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Jogo dos Pontinhos Online</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css">
+</head>
+<body>
+
+    <h1>🌌 Jogo dos Pontinhos Online 🌌</h1>
+
+    <div id="menu">
+
+        <div class="campo">
+            <label>Seu Nome</label>
+
+            <input
+                type="text"
+                id="nome"
+                placeholder="Digite seu nome">
+        </div>
+
+        <div class="campo">
+            <label>Tamanho do Tabuleiro</label>
+
+            <select id="tamanho">
+                <option value="3">3 x 3</option>
+                <option value="4">4 x 4</option>
+                <option value="5">5 x 5</option>
+                <option value="6">6 x 6</option>
+                <option value="8">8 x 8</option>
+                <option value="10">10 x 10</option>
+            </select>
+        </div>
+
+        <div class="botoes">
+
+            <button id="btnCriarSala">
+                Criar Sala
+            </button>
+
+            <button id="btnEntrarSala">
+                Entrar em Sala
+            </button>
+
+        </div>
+
+    </div>
+
+    <div id="salaInfo">
+
+        <h2 id="codigoSala"></h2>
+
+        <h3 id="status">
+            Informe seu nome para começar
+        </h3>
+
+    </div>
+
+    <div id="placar">
+
+        <div class="jogador">
+
+            <span
+                id="nome1"
+                class="nome-j1">
+
+                Jogador 1
+
+            </span>
+
+            :
+
+            <span id="jogador1">
+                0
+            </span>
+
+        </div>
+
+        <div class="jogador">
+
+            <span
+                id="nome2"
+                class="nome-j2">
+
+                Jogador 2
+
+            </span>
+
+            :
+
+            <span id="jogador2">
+                0
+            </span>
+
+        </div>
+
+    </div>
+
+    <h2 id="turno">
+        Aguardando jogadores...
+    </h2>
+
+    <div id="container-tabuleiro">
+
+        <div id="tabuleiro">
+
+        </div>
+
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="script.js"></script>
+
+</body>
+</html>
