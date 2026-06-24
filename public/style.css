@@ -337,3 +337,9 @@ button:disabled{
     background:#ff5a7a !important;
     box-shadow:0 0 15px #ff5a7a !important;
 }
+#btnNovaPartida{
+    background:#ffc107;
+    color:#000;
+    margin:10px auto;
+    display:none;
+}

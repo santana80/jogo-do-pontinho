@@ -89,6 +89,31 @@ io.on("connection", (socket) => {
         );
     });
 
+    /* ---------------- NOVA PARTIDA ---------------- */
+socket.on("novaPartida", (dados) => {
+
+    console.log("NOVA PARTIDA RECEBIDA");
+    console.log(dados);
+
+    if (!dados || !dados.sala) return;
+
+    const sala = salas[dados.sala];
+
+    if (!sala) {
+        console.log("SALA NÃO ENCONTRADA");
+        return;
+    }
+
+    sala.tamanho = dados.tamanho;
+
+    io.to(dados.sala).emit("reiniciarPartida", {
+        jogadores: sala.jogadores,
+        tamanho: sala.tamanho
+    });
+
+    console.log("REINICIANDO PARTIDA");
+});
+
     /* ---------------- SAIR ---------------- */
     socket.on("disconnect", () => {
 
