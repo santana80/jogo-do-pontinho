@@ -193,59 +193,72 @@ button:disabled{
 }
 
 /* PONTOS */
+/* DESKTOP */
 .ponto{
-    width:clamp(8px, 2vw, 16px);
-    height:clamp(8px, 2vw, 16px);
-
+    width:8px;
+    height:8px;
     background:white;
     border-radius:50%;
     box-shadow:0 0 10px white;
+    position:relative;
     z-index:10;
 }
 
-/* LINHAS */
 .linha-h{
-    width:100%;
-    height:6px;
+    width:calc(100% + 8px);
+    height:8px;
+    margin-left:-4px;
+    margin-right:-4px;
     background:rgba(255,255,255,0.25);
     cursor:pointer;
     transition:0.2s;
+    position:relative;
+    z-index:5;
 }
 
 .linha-v{
-    width:6px;
-    height:100%;
+    width:8px;
+    height:calc(100% + 8px);
+    margin-top:-4px;
+    margin-bottom:-4px;
     background:rgba(255,255,255,0.25);
     cursor:pointer;
     transition:0.2s;
+    position:relative;
+    z-index:5;
 }
 
 /* CAIXAS */
 .caixa{
-    width:clamp(28px, 8vw, 60px);
-    height:clamp(28px, 8vw, 60px);
+    width:100%;
+    height:100%;
     position:relative;
-
+    overflow:visible;
+    pointer-events:none;
 }
 
-.caixa.j1{
-    background:
-        rgba(66,165,255,0.35);
-
-    box-shadow:
-        0 0 0 4px rgba(66,165,255,0.35),
-        0 0 20px rgba(66,165,255,0.7);
+.caixa::before{
+    content:"";
+    position:absolute;
+    top:-8px;
+    left:-8px;
+    right:-8px;
+    bottom:-8px;
+    z-index:1;
+    pointer-events:none;
 }
 
-.caixa.j2{
-    background:
-        rgba(255,90,122,0.35);
-
-    box-shadow:
-        0 0 0 4px rgba(255,90,122,0.35),
-        0 0 20px rgba(255,90,122,0.7);
+.caixa.j1::before{
+    background:rgba(66,165,255,0.55);
 }
 
+.caixa.j2::before{
+    background:rgba(255,90,122,0.55);
+}
+
+.ponto{
+    z-index:20;
+}
 
 /* RESPONSIVO */
 @media (max-width:700px){

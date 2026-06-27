@@ -3,6 +3,8 @@ const app = express();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 
+console.log("SERVIDOR NOVO CARREGADO");
+
 app.use(express.static("public"));
 
 const salas = {};
@@ -14,10 +16,11 @@ io.on("connection", (socket) => {
     /* ---------------- CRIAR SALA ---------------- */
     socket.on("criarSala", (nome, tamanho, callback) => {
 
-        const codigo = Math.random()
-            .toString(36)
-            .substring(2, 8)
-            .toUpperCase();
+        let codigo;
+
+do {
+    codigo = Math.floor(10000 + Math.random() * 90000).toString();
+} while (salas[codigo]);
 
         console.log("Sala criada:", codigo);
 
