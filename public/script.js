@@ -29,6 +29,26 @@ const btnNovaPartida = document.getElementById("btnNovaPartida");
 document.getElementById("btnCriarSala").addEventListener("click", criarSala);
 document.getElementById("btnEntrarSala").addEventListener("click", entrarSala);
 
+const menuInicial = document.getElementById("menuInicial");
+const menu = document.getElementById("menu");
+
+document
+    .getElementById("btnModoOnline")
+    .addEventListener("click", () => {
+
+        menuInicial.style.display = "none";
+        menu.style.display = "block";
+
+    });
+
+document
+    .getElementById("btnModoIA")
+    .addEventListener("click", () => {
+
+        alert("Modo IA será implementado na próxima etapa.");
+
+    });
+
 
 
 function criarSala() {

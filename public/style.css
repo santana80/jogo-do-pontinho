@@ -356,3 +356,30 @@ button:disabled{
     margin:10px auto;
     display:none;
 }
+
+#menuInicial {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 350px;
+    margin: 20px auto;
+}
+
+#menuInicial button {
+    padding: 15px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 10px;
+
+    background: #1e3a5f;
+    color: white;
+
+    border: 1px solid #4a90e2;
+
+    transition: 0.3s;
+}
+
+#menuInicial button:hover {
+    background: #2d5c92;
+    transform: scale(1.03);
+}
