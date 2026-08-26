@@ -2,17 +2,19 @@ const socket = io();
 
 let salaAtual = "";
 let meuNumero = 0;
+let modoJogo = "";
+let nivelIA = "facil";
+let instanciaIA = null;
+let iaPensando = false;
+let jogoFinalizado = false;
 
 let tamanhoGrid = 4;
-
 let nomeJogador1 = "";
 let nomeJogador2 = "";
-
 let jogadorAtual = 1;
 let pontuacaoJ1 = 0;
 let pontuacaoJ2 = 0;
 let caixasFechadas = 0;
-
 let linhasHorizontais;
 let linhasVerticais;
 let caixas;
@@ -23,33 +25,50 @@ const placarJ2 = document.getElementById("jogador2");
 const turnoTexto = document.getElementById("turno");
 const statusSala = document.getElementById("status");
 const codigoSala = document.getElementById("codigoSala");
-
 const btnNovaPartida = document.getElementById("btnNovaPartida");
+const menuInicial = document.getElementById("menuInicial");
+const menuOnline = document.getElementById("menu");
+const menuIA = document.getElementById("menuIA");
+const areaJogo = document.getElementById("areaJogo");
 
+/* ---------------- NAVEGAÇÃO ---------------- */
+
+document.getElementById("btnModoOnline").addEventListener("click", () => {
+    modoJogo = "online";
+    menuInicial.style.display = "none";
+    menuIA.style.display = "none";
+    menuOnline.style.display = "flex";
+});
+
+document.getElementById("btnModoIA").addEventListener("click", () => {
+    modoJogo = "ia";
+    menuInicial.style.display = "none";
+    menuOnline.style.display = "none";
+    menuIA.style.display = "flex";
+});
+
+document.getElementById("btnVoltarOnline").addEventListener("click", voltarMenuInicial);
+document.getElementById("btnVoltarIA").addEventListener("click", voltarMenuInicial);
 document.getElementById("btnCriarSala").addEventListener("click", criarSala);
 document.getElementById("btnEntrarSala").addEventListener("click", entrarSala);
+document.getElementById("btnIniciarIA").addEventListener("click", iniciarPartidaIA);
 
-const menuInicial = document.getElementById("menuInicial");
-const menu = document.getElementById("menu");
+function voltarMenuInicial() {
+    modoJogo = "";
+    menuOnline.style.display = "none";
+    menuIA.style.display = "none";
+    areaJogo.style.display = "none";
+    menuInicial.style.display = "flex";
+}
 
-document
-    .getElementById("btnModoOnline")
-    .addEventListener("click", () => {
+function mostrarAreaJogo() {
+    menuInicial.style.display = "none";
+    menuOnline.style.display = "none";
+    menuIA.style.display = "none";
+    areaJogo.style.display = "block";
+}
 
-        menuInicial.style.display = "none";
-        menu.style.display = "block";
-
-    });
-
-document
-    .getElementById("btnModoIA")
-    .addEventListener("click", () => {
-
-        alert("Modo IA será implementado na próxima etapa.");
-
-    });
-
-
+/* ---------------- MODO ONLINE ---------------- */
 
 function criarSala() {
     const nome = document.getElementById("nome").value.trim();
@@ -59,7 +78,8 @@ function criarSala() {
         return;
     }
 
-    tamanhoGrid = parseInt(document.getElementById("tamanho").value);
+    modoJogo = "online";
+    tamanhoGrid = parseInt(document.getElementById("tamanho").value, 10);
 
     socket.emit("criarSala", nome, tamanhoGrid, (resposta) => {
         if (!resposta.sucesso) return;
@@ -71,7 +91,7 @@ function criarSala() {
         codigoSala.innerText = "Código da Sala: " + salaAtual;
         statusSala.innerText = "Aguardando outro jogador...";
 
-        bloquearMenu();
+        bloquearMenuOnline();
     });
 }
 
@@ -86,11 +106,13 @@ function entrarSala() {
     const codigo = prompt("Digite o código da sala:");
     if (!codigo) return;
 
+    modoJogo = "online";
+
     socket.emit(
         "entrarSala",
         {
             nome,
-            codigo: codigo.toUpperCase()
+            codigo: codigo.trim().toUpperCase()
         },
         (resposta) => {
             if (!resposta.sucesso) {
@@ -98,81 +120,146 @@ function entrarSala() {
                 return;
             }
 
-            salaAtual = codigo.toUpperCase();
+            salaAtual = codigo.trim().toUpperCase();
             meuNumero = 2;
             nomeJogador2 = nome;
 
-            bloquearMenu();
+            bloquearMenuOnline();
         }
     );
 }
 
-function bloquearMenu() {
+function bloquearMenuOnline() {
     document.getElementById("nome").disabled = true;
     document.getElementById("tamanho").disabled = true;
     document.getElementById("btnCriarSala").disabled = true;
     document.getElementById("btnEntrarSala").disabled = true;
-
-    document.getElementById("menu").style.display = "none";
+    mostrarAreaJogo();
 }
-
-/* ---------------- PARTIDA ---------------- */
 
 socket.on("iniciarPartida", (dados) => {
     if (!dados?.jogadores || dados.jogadores.length < 2) return;
 
+    modoJogo = "online";
     nomeJogador1 = dados.jogadores[0].nome;
     nomeJogador2 = dados.jogadores[1].nome;
+    tamanhoGrid = Number(dados.tamanho);
 
-    tamanhoGrid = dados.tamanho;
-
-    document.getElementById("nome1").innerText = nomeJogador1;
-    document.getElementById("nome2").innerText = nomeJogador2;
-
+    atualizarNomesPlacar();
     statusSala.innerText = "Partida iniciada!";
+    codigoSala.innerText = "Código da Sala: " + salaAtual;
     btnNovaPartida.style.display = "none";
 
+    mostrarAreaJogo();
     reiniciarEstado();
 });
 
 socket.on("reiniciarPartida", (dados) => {
-    tamanhoGrid = dados.tamanho;
+    modoJogo = "online";
+    tamanhoGrid = Number(dados.tamanho);
 
     document.getElementById("tamanho").value = tamanhoGrid;
     document.getElementById("tamanho").disabled = true;
 
     btnNovaPartida.style.display = "none";
     btnNovaPartida.disabled = true;
-
+    menuOnline.style.display = "none";
     statusSala.innerText = "Nova partida iniciada!";
 
     reiniciarEstado();
 });
 
-function solicitarNovaPartida() {
-    if (meuNumero !== 1) return;
+socket.on("jogadaRecebida", (dados) => {
+    executarJogada(dados.tipo, dados.f, dados.c, dados.jogador);
+});
 
-    document.getElementById("menu").style.display = "flex";
+socket.on("jogadorSaiu", () => {
+    alert("O outro jogador saiu da sala.");
+    location.reload();
+});
 
-    document.getElementById("nome").disabled = true;
-    document.getElementById("tamanho").disabled = false;
+/* ---------------- MODO IA ---------------- */
 
-    document.getElementById("btnCriarSala").style.display = "none";
-    document.getElementById("btnEntrarSala").style.display = "none";
+function iniciarPartidaIA() {
+    const nome = document.getElementById("nomeIA").value.trim();
 
-    btnNovaPartida.disabled = false;
-    btnNovaPartida.style.display = "inline-block";
-    btnNovaPartida.style.pointerEvents = "auto";
-    btnNovaPartida.style.opacity = "1";
+    if (nome === "") {
+        alert("Digite seu nome.");
+        return;
+    }
+
+    modoJogo = "ia";
+    meuNumero = 1;
+    salaAtual = "";
+    nivelIA = document.getElementById("nivelIA").value;
+    tamanhoGrid = parseInt(document.getElementById("tamanhoIA").value, 10);
+    instanciaIA = new IA(nivelIA);
+
+    nomeJogador1 = nome;
+    nomeJogador2 = `🤖 IA ${nomeNivelIA(nivelIA)}`;
+
+    document.getElementById("nome").value = nome;
+    document.getElementById("tamanho").value = tamanhoGrid;
+
+    atualizarNomesPlacar();
+    codigoSala.innerText = "";
+    statusSala.innerText = `Partida contra IA ${nomeNivelIA(nivelIA)} iniciada!`;
+
+    mostrarAreaJogo();
+    reiniciarEstado();
 }
 
-/* ---------------- GAME ---------------- */
+function nomeNivelIA(nivel) {
+    const nomes = {
+        facil: "Fácil",
+        medio: "Média",
+        dificil: "Difícil"
+    };
+    return nomes[nivel] || "Fácil";
+}
+
+function agendarJogadaIA() {
+    if (
+        modoJogo !== "ia" ||
+        jogoFinalizado ||
+        jogadorAtual !== 2 ||
+        iaPensando
+    ) {
+        return;
+    }
+
+    iaPensando = true;
+    turnoTexto.innerText = `${nomeJogador2} está pensando...`;
+    turnoTexto.style.color = "#ff5a7a";
+
+    window.setTimeout(() => {
+        const jogada = instanciaIA.escolherJogada({
+            tamanhoGrid,
+            linhasHorizontais,
+            linhasVerticais
+        });
+
+        iaPensando = false;
+
+        if (!jogada || jogoFinalizado) return;
+
+        executarJogada(jogada.tipo, jogada.f, jogada.c, 2);
+
+        if (!jogoFinalizado && jogadorAtual === 2) {
+            agendarJogadaIA();
+        }
+    }, 650);
+}
+
+/* ---------------- ESTADO DO JOGO ---------------- */
 
 function reiniciarEstado() {
     jogadorAtual = 1;
     pontuacaoJ1 = 0;
     pontuacaoJ2 = 0;
     caixasFechadas = 0;
+    jogoFinalizado = false;
+    iaPensando = false;
 
     placarJ1.innerText = "0";
     placarJ2.innerText = "0";
@@ -192,11 +279,19 @@ function reiniciarEstado() {
         () => Array(tamanhoGrid).fill(null)
     );
 
+    btnNovaPartida.style.display = "none";
     atualizarTurno();
     criarTabuleiro();
 }
 
+function atualizarNomesPlacar() {
+    document.getElementById("nome1").innerText = nomeJogador1 || "Jogador 1";
+    document.getElementById("nome2").innerText = nomeJogador2 || "Jogador 2";
+}
+
 function atualizarTurno() {
+    if (jogoFinalizado) return;
+
     if (jogadorAtual === 1) {
         turnoTexto.innerText = `Vez de ${nomeJogador1}`;
         turnoTexto.style.color = "#42a5ff";
@@ -205,6 +300,8 @@ function atualizarTurno() {
         turnoTexto.style.color = "#ff5a7a";
     }
 }
+
+/* ---------------- TABULEIRO ---------------- */
 
 function criarTabuleiro() {
     tabuleiro.innerHTML = "";
@@ -255,27 +352,19 @@ function criarTabuleiro() {
 
             if (r % 2 === 0 && c % 2 === 0) {
                 el.classList.add("ponto");
-            }
-
-            else if (r % 2 === 0) {
+            } else if (r % 2 === 0) {
                 el.classList.add("linha-h");
 
                 const f = r / 2;
                 const col = (c - 1) / 2;
-
-                el.addEventListener("click", () => jogar("h", f, col, el));
-            }
-
-            else if (c % 2 === 0) {
+                el.addEventListener("click", () => jogar("h", f, col));
+            } else if (c % 2 === 0) {
                 el.classList.add("linha-v");
 
                 const f = (r - 1) / 2;
                 const col = c / 2;
-
-                el.addEventListener("click", () => jogar("v", f, col, el));
-            }
-
-            else {
+                el.addEventListener("click", () => jogar("v", f, col));
+            } else {
                 el.classList.add("caixa");
                 caixas[(r - 1) / 2][(c - 1) / 2] = el;
             }
@@ -285,100 +374,101 @@ function criarTabuleiro() {
     }
 }
 
-/* ---------------- JOGADA ---------------- */
+/* ---------------- JOGADAS ---------------- */
 
-function jogar(tipo, f, c, el) {
-    if (
-        (meuNumero === 1 && jogadorAtual !== 1) ||
-        (meuNumero === 2 && jogadorAtual !== 2)
-    ) return;
+function jogar(tipo, f, c) {
+    if (jogoFinalizado || iaPensando) return;
+
+    if (modoJogo === "online") {
+        if (
+            (meuNumero === 1 && jogadorAtual !== 1) ||
+            (meuNumero === 2 && jogadorAtual !== 2)
+        ) {
+            return;
+        }
+    }
+
+    if (modoJogo === "ia" && jogadorAtual !== 1) return;
 
     const jogadorDaJogada = jogadorAtual;
+    const executada = executarJogada(tipo, f, c, jogadorDaJogada);
+
+    if (!executada) return;
+
+    if (modoJogo === "online") {
+        socket.emit("jogada", {
+            sala: salaAtual,
+            tipo,
+            f,
+            c,
+            jogador: jogadorDaJogada
+        });
+    }
+
+    if (modoJogo === "ia" && !jogoFinalizado && jogadorAtual === 2) {
+        agendarJogadaIA();
+    }
+}
+
+function executarJogada(tipo, f, c, jogador) {
+    if (jogoFinalizado) return false;
+
+    jogadorAtual = jogador;
 
     if (tipo === "h") {
-        if (linhasHorizontais[f][c]) return;
-        selecionarLinhaHorizontal(f, c, el, jogadorDaJogada);
-    } else {
-        if (linhasVerticais[f][c]) return;
-        selecionarLinhaVertical(f, c, el, jogadorDaJogada);
-    }
+        if (linhasHorizontais[f]?.[c]) return false;
 
-    socket.emit("jogada", {
-        sala: salaAtual,
-        tipo,
-        f,
-        c,
-        jogador: jogadorDaJogada
-    });
-}
-
-socket.on("jogadaRecebida", (dados) => {
-    if (dados.tipo === "h") {
-        const idx = dados.f * tamanhoGrid + dados.c;
+        linhasHorizontais[f][c] = true;
+        const idx = f * tamanhoGrid + c;
         const el = document.querySelectorAll(".linha-h")[idx];
+        if (!el) return false;
+        el.classList.add(jogador === 1 ? "selecionada-j1" : "selecionada-j2");
+    } else if (tipo === "v") {
+        if (linhasVerticais[f]?.[c]) return false;
 
-        selecionarLinhaHorizontal(dados.f, dados.c, el, dados.jogador);
-    } else {
-        const idx = dados.f * (tamanhoGrid + 1) + dados.c;
+        linhasVerticais[f][c] = true;
+        const idx = f * (tamanhoGrid + 1) + c;
         const el = document.querySelectorAll(".linha-v")[idx];
-
-        selecionarLinhaVertical(dados.f, dados.c, el, dados.jogador);
+        if (!el) return false;
+        el.classList.add(jogador === 1 ? "selecionada-j1" : "selecionada-j2");
+    } else {
+        return false;
     }
-});
 
-function selecionarLinhaHorizontal(f, c, el, jogador) {
-    if (!el || linhasHorizontais[f][c]) return;
-
-    linhasHorizontais[f][c] = true;
-    el.classList.add(jogador === 1 ? "selecionada-j1" : "selecionada-j2");
-
-    verificarCaixas(f, c, "h");
+    verificarCaixas(f, c, tipo, jogador);
+    return true;
 }
 
-function selecionarLinhaVertical(f, c, el, jogador) {
-    if (!el || linhasVerticais[f][c]) return;
-
-    linhasVerticais[f][c] = true;
-    el.classList.add(jogador === 1 ? "selecionada-j1" : "selecionada-j2");
-
-    verificarCaixas(f, c, "v");
-}
-
-/* ---------------- LÓGICA ---------------- */
-
-function verificarCaixas(f, c, tipo) {
+function verificarCaixas(f, c, tipo, jogador) {
     let ganhouPonto = false;
 
     if (tipo === "h") {
         if (f > 0 && checarCaixaCompleta(f - 1, c)) {
-            marcarCaixa(f - 1, c);
-            ganhouPonto = true;
+            ganhouPonto = marcarCaixa(f - 1, c, jogador) || ganhouPonto;
         }
 
         if (f < tamanhoGrid && checarCaixaCompleta(f, c)) {
-            marcarCaixa(f, c);
-            ganhouPonto = true;
+            ganhouPonto = marcarCaixa(f, c, jogador) || ganhouPonto;
         }
     }
 
     if (tipo === "v") {
         if (c > 0 && checarCaixaCompleta(f, c - 1)) {
-            marcarCaixa(f, c - 1);
-            ganhouPonto = true;
+            ganhouPonto = marcarCaixa(f, c - 1, jogador) || ganhouPonto;
         }
 
         if (c < tamanhoGrid && checarCaixaCompleta(f, c)) {
-            marcarCaixa(f, c);
-            ganhouPonto = true;
+            ganhouPonto = marcarCaixa(f, c, jogador) || ganhouPonto;
         }
     }
 
     if (!ganhouPonto) {
-        jogadorAtual = jogadorAtual === 1 ? 2 : 1;
-        atualizarTurno();
+        jogadorAtual = jogador === 1 ? 2 : 1;
     }
 
-    verificarFimDeJogo();
+    if (!verificarFimDeJogo()) {
+        atualizarTurno();
+    }
 }
 
 function checarCaixaCompleta(f, c) {
@@ -390,17 +480,20 @@ function checarCaixaCompleta(f, c) {
     );
 }
 
-function marcarCaixa(f, c) {
+function marcarCaixa(f, c, jogador) {
+    const caixa = caixas[f]?.[c];
+    if (!caixa) return false;
+
     if (
-        caixas[f][c].classList.contains("j1") ||
-        caixas[f][c].classList.contains("j2")
+        caixa.classList.contains("j1") ||
+        caixa.classList.contains("j2")
     ) {
-        return;
+        return false;
     }
 
-    caixas[f][c].classList.add(jogadorAtual === 1 ? "j1" : "j2");
+    caixa.classList.add(jogador === 1 ? "j1" : "j2");
 
-    if (jogadorAtual === 1) {
+    if (jogador === 1) {
         pontuacaoJ1++;
         placarJ1.innerText = pontuacaoJ1;
     } else {
@@ -409,46 +502,64 @@ function marcarCaixa(f, c) {
     }
 
     caixasFechadas++;
+    return true;
 }
 
+/* ---------------- FIM E NOVA PARTIDA ---------------- */
+
 function verificarFimDeJogo() {
-    if (caixasFechadas !== tamanhoGrid * tamanhoGrid) return;
+    if (caixasFechadas !== tamanhoGrid * tamanhoGrid) return false;
 
-    let vencedor = "Empate";
+    jogoFinalizado = true;
 
-    if (pontuacaoJ1 > pontuacaoJ2) {
-        vencedor = nomeJogador1;
+    if (pontuacaoJ1 === pontuacaoJ2) {
+        turnoTexto.innerText = "🤝 Empate!";
+        turnoTexto.style.color = "#ffd700";
+    } else if (pontuacaoJ1 > pontuacaoJ2) {
+        turnoTexto.innerText = `🏆 ${nomeJogador1} venceu!`;
         turnoTexto.style.color = "#42a5ff";
-    } else if (pontuacaoJ2 > pontuacaoJ1) {
-        vencedor = nomeJogador2;
+    } else {
+        turnoTexto.innerText = `🏆 ${nomeJogador2} venceu!`;
         turnoTexto.style.color = "#ff5a7a";
     }
 
-    turnoTexto.innerText = "🏆 " + vencedor + " venceu!";
-
     statusSala.innerText =
-        meuNumero === 1
+        modoJogo === "ia" || meuNumero === 1
             ? "Escolha o novo tamanho e clique em Jogar novamente."
             : "Aguardando o jogador 1 iniciar nova partida.";
 
     solicitarNovaPartida();
+    return true;
 }
 
-/* ---------------- OUTROS EVENTOS ---------------- */
+function solicitarNovaPartida() {
+    if (modoJogo === "online" && meuNumero !== 1) return;
 
-socket.on("jogadorSaiu", () => {
-    alert("O outro jogador saiu da sala.");
-    location.reload();
-});
+    menuOnline.style.display = "flex";
+    document.getElementById("nome").disabled = true;
+    document.getElementById("tamanho").disabled = false;
+    document.getElementById("btnCriarSala").style.display = "none";
+    document.getElementById("btnEntrarSala").style.display = "none";
+    document.getElementById("btnVoltarOnline").style.display = "none";
+
+    btnNovaPartida.disabled = false;
+    btnNovaPartida.style.display = "inline-block";
+    btnNovaPartida.style.pointerEvents = "auto";
+    btnNovaPartida.style.opacity = "1";
+}
+
 function chamarNovaPartida() {
+    const novoTamanho = parseInt(document.getElementById("tamanho").value, 10);
 
-    console.log("FUNÇÃO CHAMADA");
-
-    const novoTamanho =
-        parseInt(document.getElementById("tamanho").value);
-
-    console.log("Sala:", salaAtual);
-    console.log("Tamanho:", novoTamanho);
+    if (modoJogo === "ia") {
+        tamanhoGrid = novoTamanho;
+        document.getElementById("tamanhoIA").value = novoTamanho;
+        menuOnline.style.display = "none";
+        btnNovaPartida.style.display = "none";
+        statusSala.innerText = `Nova partida contra IA ${nomeNivelIA(nivelIA)}!`;
+        reiniciarEstado();
+        return;
+    }
 
     socket.emit("novaPartida", {
         sala: salaAtual,

@@ -38,7 +38,8 @@ h1{
 
 /* MENU */
 
-#menu{
+#menu,
+.painel-menu{
     display:flex;
     flex-wrap:wrap;
     justify-content:center;
@@ -314,7 +315,8 @@ button:disabled{
     margin-bottom:8px;
 }
 
-    #menu{
+    #menu,
+    .painel-menu{
         flex-direction:column;
         align-items:center;
         padding:12px;
@@ -356,30 +358,51 @@ button:disabled{
     margin:10px auto;
     display:none;
 }
-
-#menuInicial {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    max-width: 350px;
-    margin: 20px auto;
+/* MENU INICIAL E MODO IA */
+.menu-opcoes{
+    display:flex;
+    flex-direction:column;
+    gap:15px;
+    width:min(350px, 92vw);
+    margin:20px auto 30px;
+    padding:25px;
+    border-radius:25px;
+    background:rgba(0,0,0,0.45);
+    backdrop-filter:blur(10px);
 }
 
-#menuInicial button {
-    padding: 15px;
-    font-size: 18px;
-    cursor: pointer;
-    border-radius: 10px;
-
-    background: #1e3a5f;
-    color: white;
-
-    border: 1px solid #4a90e2;
-
-    transition: 0.3s;
+.menu-opcoes button,
+#menuIA button{
+    background:#1e3a5f;
+    color:#fff;
+    border:1px solid #4a90e2;
 }
 
-#menuInicial button:hover {
-    background: #2d5c92;
-    transform: scale(1.03);
+.menu-opcoes button:hover,
+#menuIA button:hover{
+    background:#2d5c92;
+}
+
+#btnIniciarIA{
+    background:#28a745 !important;
+    border-color:#46c463 !important;
+}
+
+.btn-secundario{
+    background:#555 !important;
+    border-color:#777 !important;
+}
+
+#areaJogo{
+    width:100%;
+}
+
+@media (max-width:700px){
+    .menu-opcoes,
+    .painel-menu{
+        width:min(300px, 96vw);
+        padding:12px;
+        gap:10px;
+        margin:10px auto 12px;
+    }
 }

@@ -2,46 +2,60 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Jogo dos Pontinhos Online</title>
-
-    <link
-        rel="stylesheet"
-        href="style.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <h1>🌌 Jogo dos Pontinhos Online 🌌</h1>
 
-    <div id="menuInicial">
+    <div id="menuInicial" class="menu-opcoes">
+        <button id="btnModoOnline">🎮 Jogar Online</button>
+        <button id="btnModoIA">🤖 Jogar contra IA</button>
+    </div>
 
-    <button id="btnModoOnline">
-        🎮 Jogar Online
-    </button>
-
-    <button id="btnModoIA">
-        🤖 Jogar contra IA
-    </button>
-
-</div>
-
-    <div id="menu" style="display:none;">
-
+    <div id="menuIA" class="painel-menu" style="display:none;">
         <div class="campo">
             <label>Seu Nome</label>
+            <input type="text" id="nomeIA" placeholder="Digite seu nome">
+        </div>
 
-            <input
-                type="text"
-                id="nome"
-                placeholder="Digite seu nome">
+        <div class="campo">
+            <label>Dificuldade</label>
+            <select id="nivelIA">
+                <option value="facil">Fácil</option>
+                <option value="medio">Médio</option>
+                <option value="dificil">Difícil</option>
+            </select>
         </div>
 
         <div class="campo">
             <label>Tamanho do Tabuleiro</label>
+            <select id="tamanhoIA">
+                <option value="3">3 x 3</option>
+                <option value="4">4 x 4</option>
+                <option value="5">5 x 5</option>
+                <option value="6">6 x 6</option>
+                <option value="8">8 x 8</option>
+                <option value="10">10 x 10</option>
+            </select>
+        </div>
 
+        <div class="botoes">
+            <button id="btnIniciarIA">Iniciar Partida</button>
+            <button id="btnVoltarIA" class="btn-secundario">Voltar</button>
+        </div>
+    </div>
+
+    <div id="menu" style="display:none;">
+        <div class="campo">
+            <label>Seu Nome</label>
+            <input type="text" id="nome" placeholder="Digite seu nome">
+        </div>
+
+        <div class="campo">
+            <label>Tamanho do Tabuleiro</label>
             <select id="tamanho">
                 <option value="3">3 x 3</option>
                 <option value="4">4 x 4</option>
@@ -53,89 +67,45 @@
         </div>
 
         <div class="botoes">
-
-            <button id="btnCriarSala">
-                Criar Sala
-            </button>
-
-            <button id="btnEntrarSala">
-                Entrar em Sala
-            </button>
-
-            
-
+            <button id="btnCriarSala">Criar Sala</button>
+            <button id="btnEntrarSala">Entrar em Sala</button>
+            <button id="btnVoltarOnline" class="btn-secundario">Voltar</button>
         </div>
-
     </div>
 
-   <button id="btnNovaPartida" type="button" onclick="chamarNovaPartida()" style="display:none;">
-    Jogar novamente
-</button>
+    <button id="btnNovaPartida" type="button" onclick="chamarNovaPartida()" style="display:none;">
+        Jogar novamente
+    </button>
 
-    <div id="salaInfo">
-
-        <h2 id="codigoSala"></h2>
-
-        <h3 id="status">
-            Informe seu nome para começar
-        </h3>
-
-    </div>
-
-    <div id="placar">
-
-        <div class="jogador">
-
-            <span
-                id="nome1"
-                class="nome-j1">
-
-                Jogador 1
-
-            </span>
-
-            :
-
-            <span id="jogador1">
-                0
-            </span>
-
+    <div id="areaJogo" style="display:none;">
+        <div id="salaInfo">
+            <h2 id="codigoSala"></h2>
+            <h3 id="status">Informe seu nome para começar</h3>
         </div>
 
-        <div class="jogador">
+        <div id="placar">
+            <div class="jogador">
+                <span id="nome1" class="nome-j1">Jogador 1</span>
+                :
+                <span id="jogador1">0</span>
+            </div>
 
-            <span
-                id="nome2"
-                class="nome-j2">
-
-                Jogador 2
-
-            </span>
-
-            :
-
-            <span id="jogador2">
-                0
-            </span>
-
+            <div class="jogador">
+                <span id="nome2" class="nome-j2">Jogador 2</span>
+                :
+                <span id="jogador2">0</span>
+            </div>
         </div>
 
-    </div>
+        <h2 id="turno">Aguardando jogadores...</h2>
 
-    <h2 id="turno">
-        Aguardando jogadores...
-    </h2>
-
-    <div id="container-tabuleiro">
-
-        <div id="tabuleiro">
-
+        <div id="container-tabuleiro">
+            <div id="tabuleiro"></div>
         </div>
-
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
+    <script src="ia.js"></script>
     <script src="script.js"></script>
-
 </body>
 </html>
