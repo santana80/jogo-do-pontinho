@@ -1,3 +1,4 @@
 node_modules/
-public.zip
-public_backup/
+npm-debug.log*
+.DS_Store
+.env

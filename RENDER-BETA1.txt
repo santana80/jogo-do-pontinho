@@ -1,0 +1,10 @@
+JOGO DOS PONTINHOS — BETA 1 / RENDER READY
+
+Render:
+Build Command: npm install
+Start Command: npm start
+
+Teste local:
+npm install
+npm start
+Abra http://localhost:3000

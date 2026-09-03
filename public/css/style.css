@@ -1,0 +1,2016 @@
+/* ============================================================
+   SMS STUDIO DESIGN SYSTEM
+   Jogo dos Pontinhos — Nebula Edition
+   Etapa 2: HUB, menus e HUD
+   ============================================================ */
+
+:root{
+    /* Fundos */
+    --space-950:#050711;
+    --space-900:#080b18;
+    --space-850:#0b1020;
+    --space-800:#10172b;
+    --space-700:#18233d;
+
+    /* Marca */
+    --neon-blue:#28a8ff;
+    --neon-cyan:#56e5ff;
+    --neon-purple:#9857ff;
+    --neon-pink:#db5eff;
+
+    /* Jogadores */
+    --player-one:#42a5ff;
+    --player-two:#ff5a7a;
+
+    /* Estados */
+    --success:#2ed573;
+    --warning:#ffc048;
+    --danger:#ff4757;
+
+    /* Textos */
+    --text-primary:#ffffff;
+    --text-secondary:#b8c3d9;
+    --text-muted:#7f8ba5;
+
+    /* Superfícies */
+    --panel:rgba(8,11,24,.84);
+    --panel-strong:rgba(8,11,24,.94);
+    --panel-soft:rgba(255,255,255,.065);
+    --border:rgba(86,229,255,.24);
+    --border-soft:rgba(255,255,255,.10);
+
+    /* Geometria */
+    --radius-sm:12px;
+    --radius-md:16px;
+    --radius-lg:24px;
+    --radius-xl:32px;
+
+    /* Movimento */
+    --transition-fast:.18s ease;
+    --transition-main:.28s cubic-bezier(.2,.75,.25,1);
+
+    /* Sombras */
+    --shadow-panel:0 28px 80px rgba(0,0,0,.56);
+    --glow-blue:0 0 28px rgba(40,168,255,.22);
+    --glow-purple:0 0 34px rgba(152,87,255,.18);
+}
+
+/* =========================
+   RESET
+   ========================= */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    min-height:100%;
+    color-scheme:dark;
+}
+
+body,
+button,
+input,
+select{
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    position:relative;
+    min-height:100vh;
+    padding:22px 16px 28px;
+    overflow-x:hidden;
+
+    color:var(--text-primary);
+    text-align:center;
+
+    background-image:
+        radial-gradient(circle at 50% -10%, rgba(40,168,255,.18), transparent 38%),
+        radial-gradient(circle at 70% 35%, rgba(152,87,255,.13), transparent 42%),
+        linear-gradient(rgba(2,4,12,.74), rgba(2,4,12,.89)),
+        url("../imagens/galaxia.jpg");
+
+    background-size:cover;
+    background-position:center;
+    background-repeat:no-repeat;
+    background-attachment:fixed;
+}
+
+body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    z-index:-2;
+    pointer-events:none;
+
+    background:
+        linear-gradient(90deg, rgba(0,0,0,.32), transparent 18%, transparent 82%, rgba(0,0,0,.32)),
+        linear-gradient(0deg, rgba(0,0,0,.30), transparent 30%);
+}
+
+button,
+input,
+select{
+    -webkit-tap-highlight-color:transparent;
+}
+
+button{
+    border:0;
+}
+
+.conteudo-principal{
+    position:relative;
+    z-index:2;
+    width:100%;
+}
+
+/* =========================
+   AMBIENTAÇÃO
+   ========================= */
+.nebula-ambient{
+    position:fixed;
+    inset:0;
+    z-index:-1;
+    overflow:hidden;
+    pointer-events:none;
+}
+
+.estrela{
+    position:absolute;
+    width:3px;
+    height:3px;
+
+    border-radius:50%;
+    background:#fff;
+
+    box-shadow:
+        0 0 8px rgba(255,255,255,.95),
+        0 0 18px rgba(86,229,255,.65);
+}
+
+.estrela-1{ top:14%; left:12%; }
+.estrela-2{ top:24%; right:18%; width:2px; height:2px; }
+.estrela-3{ top:66%; left:18%; width:2px; height:2px; }
+.estrela-4{ top:72%; right:12%; }
+.estrela-5{ top:44%; left:6%; width:2px; height:2px; }
+.estrela-6{ top:10%; right:7%; width:2px; height:2px; }
+
+/* =========================
+   MARCA E CABEÇALHO
+   ========================= */
+.topo-jogo{
+    position:relative;
+    z-index:2;
+
+    width:min(980px, 96vw);
+    margin:0 auto 22px;
+}
+
+.marca-sms{
+    display:inline-flex;
+    align-items:center;
+    gap:12px;
+
+    margin-bottom:16px;
+    padding:8px 14px;
+
+    border:1px solid rgba(86,229,255,.14);
+    border-radius:999px;
+
+    background:rgba(8,11,24,.42);
+    backdrop-filter:blur(8px);
+}
+
+.marca-simbolo{
+    position:relative;
+    display:block;
+
+    width:29px;
+    height:23px;
+}
+
+.marca-simbolo i{
+    position:absolute;
+    display:block;
+
+    width:5px;
+    height:5px;
+
+    border-radius:50%;
+    background:linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+
+    box-shadow:0 0 8px rgba(86,229,255,.75);
+}
+
+.marca-simbolo i:nth-child(1){ top:0; left:0; }
+.marca-simbolo i:nth-child(2){ top:0; right:0; }
+.marca-simbolo i:nth-child(3){ top:9px; left:12px; }
+.marca-simbolo i:nth-child(4){ bottom:0; left:0; }
+.marca-simbolo i:nth-child(5){ bottom:0; right:0; }
+
+.marca-simbolo::before,
+.marca-simbolo::after{
+    content:"";
+    position:absolute;
+    height:2px;
+
+    background:linear-gradient(90deg, var(--neon-blue), var(--neon-purple));
+    box-shadow:0 0 8px rgba(40,168,255,.55);
+}
+
+.marca-simbolo::before{
+    top:2px;
+    left:4px;
+    width:21px;
+}
+
+.marca-simbolo::after{
+    bottom:2px;
+    left:4px;
+    width:21px;
+}
+
+.marca-textos{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    line-height:1.1;
+}
+
+.marca-nome{
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:3px;
+}
+
+.marca-slogan{
+    margin-top:3px;
+
+    color:var(--text-muted);
+    font-size:8px;
+    letter-spacing:.4px;
+}
+
+h1{
+    margin:0;
+
+    font-size:clamp(34px, 4.4vw, 58px);
+    line-height:1.05;
+    letter-spacing:.3px;
+
+    text-shadow:
+        0 0 8px rgba(255,255,255,.28),
+        0 0 17px rgba(40,168,255,.68),
+        0 0 38px rgba(152,87,255,.48);
+}
+
+.titulo-icone{
+    display:inline-block;
+    margin-right:4px;
+}
+
+.subtitulo-principal{
+    margin:12px auto 0;
+
+    color:var(--text-secondary);
+    font-size:14px;
+    line-height:1.5;
+}
+
+/* =========================
+   PAINÉIS
+   ========================= */
+.painel-nebula{
+    position:relative;
+
+    width:min(520px, 94vw);
+    margin:0 auto 24px;
+    padding:32px;
+
+    overflow:hidden;
+
+    border:1px solid var(--border);
+    border-radius:var(--radius-lg);
+
+    background:
+        radial-gradient(circle at 50% 0%, rgba(40,168,255,.07), transparent 38%),
+        linear-gradient(180deg, rgba(16,23,43,.90), rgba(5,7,17,.94));
+
+    backdrop-filter:blur(18px);
+    -webkit-backdrop-filter:blur(18px);
+
+    box-shadow:
+        var(--shadow-panel),
+        inset 0 1px 0 rgba(255,255,255,.075),
+        var(--glow-blue),
+        var(--glow-purple);
+}
+
+.painel-detalhe-superior{
+    position:absolute;
+    top:0;
+    left:50%;
+
+    width:46%;
+    height:2px;
+
+    transform:translateX(-50%);
+
+    background:linear-gradient(
+        90deg,
+        transparent,
+        var(--neon-cyan),
+        var(--neon-purple),
+        transparent
+    );
+
+    box-shadow:
+        0 0 14px rgba(86,229,255,.65),
+        0 0 22px rgba(152,87,255,.45);
+}
+
+/* =========================
+   HUB
+   ========================= */
+.hub-principal{
+    width:min(560px, 94vw);
+    padding:34px;
+}
+
+.cabecalho-hub{
+    margin-bottom:24px;
+}
+
+.etiqueta-versao,
+.etiqueta-painel{
+    display:inline-block;
+
+    color:var(--neon-cyan);
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:2.6px;
+}
+
+.cabecalho-hub h2{
+    margin-top:9px;
+
+    font-size:26px;
+    line-height:1.2;
+}
+
+.cabecalho-hub p{
+    max-width:430px;
+    margin:8px auto 0;
+
+    color:var(--text-secondary);
+    font-size:13px;
+    line-height:1.55;
+}
+
+.acoes-hub{
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+}
+
+.recursos-hub{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+    gap:8px 18px;
+
+    margin-top:24px;
+    padding-top:18px;
+
+    border-top:1px solid var(--border-soft);
+
+    color:var(--text-muted);
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:.25px;
+}
+
+.recursos-hub span::first-letter{
+    color:var(--neon-cyan);
+}
+
+.rodape-painel{
+    margin-top:18px;
+
+    color:rgba(127,139,165,.78);
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:1.4px;
+    text-transform:uppercase;
+}
+
+/* =========================
+   BOTÕES
+   ========================= */
+.botao-nebula,
+button{
+    position:relative;
+
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:9px;
+
+    min-height:50px;
+    padding:13px 24px;
+
+    overflow:hidden;
+
+    border:1px solid rgba(255,255,255,.15);
+    border-radius:var(--radius-md);
+
+    color:var(--text-primary);
+    background:linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+
+    font-size:16px;
+    font-weight:800;
+    letter-spacing:.1px;
+
+    cursor:pointer;
+    user-select:none;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.20),
+        0 0 20px rgba(40,168,255,.20),
+        0 0 28px rgba(152,87,255,.12);
+
+    transition:
+        transform var(--transition-main),
+        filter var(--transition-fast),
+        box-shadow var(--transition-main),
+        border-color var(--transition-fast);
+}
+
+.botao-nebula::before,
+button::before{
+    content:"";
+    position:absolute;
+    inset:-60% auto -60% -45%;
+
+    width:38%;
+
+    transform:skewX(-20deg);
+
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.34),
+        transparent
+    );
+
+    opacity:0;
+    pointer-events:none;
+}
+
+.botao-nebula:hover,
+button:hover{
+    transform:translateY(-2px) scale(1.012);
+    filter:brightness(1.08);
+
+    border-color:rgba(255,255,255,.28);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.26),
+        0 0 30px rgba(40,168,255,.34),
+        0 0 42px rgba(152,87,255,.22);
+}
+
+.botao-nebula:hover::before,
+button:hover::before{
+    opacity:1;
+}
+
+.botao-nebula:active,
+button:active{
+    transform:translateY(0) scale(.98);
+}
+
+.botao-nebula:disabled,
+button:disabled{
+    opacity:.46;
+    cursor:not-allowed;
+    filter:saturate(.4);
+    transform:none;
+    box-shadow:none;
+}
+
+.botao-principal{
+    justify-content:flex-start;
+
+    width:100%;
+    min-height:78px;
+    padding:16px 18px;
+
+    text-align:left;
+}
+
+.botao-icone{
+    display:grid;
+    place-items:center;
+
+    width:45px;
+    height:45px;
+    flex:0 0 45px;
+
+    border:1px solid rgba(255,255,255,.18);
+    border-radius:14px;
+
+    background:rgba(255,255,255,.08);
+
+    font-size:22px;
+
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.08);
+}
+
+.botao-conteudo{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+
+.botao-conteudo strong{
+    font-size:17px;
+}
+
+.botao-conteudo small{
+    color:rgba(255,255,255,.72);
+    font-size:11px;
+    font-weight:600;
+}
+
+.botao-seta{
+    margin-left:auto;
+
+    font-size:30px;
+    font-weight:300;
+    line-height:1;
+}
+
+.btn-secundario{
+    color:var(--text-primary) !important;
+    background:rgba(255,255,255,.055) !important;
+    border-color:rgba(255,255,255,.18) !important;
+    box-shadow:none !important;
+}
+
+.btn-secundario:hover{
+    background:rgba(255,255,255,.11) !important;
+    border-color:rgba(86,229,255,.58) !important;
+
+    box-shadow:0 0 18px rgba(40,168,255,.18) !important;
+}
+
+.botao-nova-partida{
+    margin:10px auto 18px;
+}
+
+/* =========================
+   FORMULÁRIOS
+   ========================= */
+.painel-formulario{
+    width:min(560px, 94vw);
+}
+
+.cabecalho-painel{
+    display:flex;
+    align-items:center;
+    gap:16px;
+
+    margin-bottom:24px;
+    padding-bottom:20px;
+
+    border-bottom:1px solid var(--border-soft);
+
+    text-align:left;
+}
+
+.icone-painel{
+    display:grid;
+    place-items:center;
+
+    width:58px;
+    height:58px;
+    flex:0 0 58px;
+
+    border:1px solid rgba(86,229,255,.30);
+    border-radius:17px;
+
+    background:
+        linear-gradient(135deg, rgba(40,168,255,.17), rgba(152,87,255,.19));
+
+    font-size:27px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.10),
+        0 0 20px rgba(40,168,255,.16);
+}
+
+.cabecalho-painel h2{
+    margin:5px 0 4px;
+
+    font-size:24px;
+    line-height:1.1;
+}
+
+.cabecalho-painel p{
+    color:var(--text-secondary);
+    font-size:12px;
+    line-height:1.45;
+}
+
+.grade-formulario{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+
+    width:100%;
+}
+
+.campo{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:9px;
+
+    width:100%;
+}
+
+.campo-largo{
+    grid-column:1 / -1;
+}
+
+.campo label{
+    display:flex;
+    align-items:center;
+    gap:7px;
+
+    color:var(--text-secondary);
+    font-size:13px;
+    font-weight:800;
+    letter-spacing:.1px;
+}
+
+.campo input,
+.campo select{
+    width:100%;
+    min-height:48px;
+    padding:12px 14px;
+
+    border:1px solid rgba(86,229,255,.23);
+    border-radius:var(--radius-sm);
+
+    color:var(--text-primary);
+    background:
+        linear-gradient(180deg, rgba(24,35,61,.94), rgba(8,12,27,.97));
+
+    font-size:14px;
+    font-weight:700;
+    outline:none;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.045),
+        0 0 15px rgba(40,168,255,.055);
+
+    transition:
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast),
+        transform var(--transition-fast);
+}
+
+.campo input::placeholder{
+    color:rgba(184,195,217,.48);
+}
+
+.campo input:focus,
+.campo select:focus{
+    border-color:var(--neon-blue);
+
+    box-shadow:
+        0 0 0 3px rgba(40,168,255,.12),
+        0 0 24px rgba(40,168,255,.15);
+
+    transform:translateY(-1px);
+}
+
+.campo input:disabled,
+.campo select:disabled{
+    opacity:.55;
+    cursor:not-allowed;
+}
+
+.campo select{
+    cursor:pointer;
+}
+
+.campo select option{
+    color:#fff;
+    background:var(--space-800);
+}
+
+.botoes{
+    display:flex;
+    gap:12px;
+}
+
+.botoes-formulario{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+
+    width:100%;
+    margin-top:22px;
+}
+
+.botoes-formulario button{
+    width:100%;
+}
+
+.botoes-formulario .btn-secundario{
+    grid-column:1 / -1;
+}
+
+.nivel-legenda{
+    display:grid;
+    gap:6px;
+
+    margin-top:18px;
+    padding:13px 15px;
+
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:var(--radius-sm);
+
+    color:var(--text-muted);
+    background:rgba(255,255,255,.035);
+
+    font-size:10px;
+    line-height:1.4;
+    text-align:left;
+}
+
+.nivel-legenda b{
+    color:var(--text-secondary);
+}
+
+/* =========================
+   ÁREA DA PARTIDA
+   ========================= */
+.area-partida{
+    width:min(1180px, 100%);
+    margin:0 auto;
+}
+
+.hud-partida{
+    width:min(900px, 96vw);
+    margin:0 auto 18px;
+}
+
+.hud-topo{
+    display:grid;
+    grid-template-columns:minmax(0, 1fr) auto;
+    gap:12px;
+    align-items:center;
+
+    margin-bottom:12px;
+}
+
+.sala-info,
+.indicador-turno{
+    min-height:62px;
+    padding:12px 17px;
+
+    border:1px solid var(--border-soft);
+    border-radius:var(--radius-md);
+
+    background:rgba(8,11,24,.76);
+    backdrop-filter:blur(12px);
+
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.04);
+}
+
+.sala-info{
+    display:flex;
+    flex-direction:column;
+    align-items:flex-start;
+    justify-content:center;
+
+    text-align:left;
+}
+
+#codigoSala{
+    margin:0;
+
+    color:var(--warning);
+    font-size:15px;
+    text-shadow:0 0 12px rgba(255,192,72,.30);
+}
+
+#status{
+    min-height:0;
+    margin-top:3px;
+
+    color:var(--text-secondary);
+    font-size:11px;
+    font-weight:600;
+}
+
+.indicador-turno{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    min-width:235px;
+}
+
+.indicador-pulso{
+    width:9px;
+    height:9px;
+
+    border-radius:50%;
+    background:var(--neon-cyan);
+
+    box-shadow:0 0 12px rgba(86,229,255,.82);
+}
+
+#turno{
+    min-height:0;
+    margin:0;
+
+    font-size:16px;
+    font-weight:900;
+    text-align:left;
+
+    text-shadow:0 0 14px rgba(0,0,0,.8);
+}
+
+.placar-nebula{
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    gap:14px;
+    align-items:stretch;
+
+    width:100%;
+    margin:0;
+    padding:0;
+
+    background:transparent;
+    border:0;
+    box-shadow:none;
+    backdrop-filter:none;
+
+    font-size:inherit;
+}
+
+.jogador{
+    display:grid;
+    grid-template-columns:auto 1fr auto;
+    gap:11px;
+    align-items:center;
+
+    min-width:0;
+    padding:14px 16px;
+
+    border:1px solid var(--border-soft);
+    border-radius:var(--radius-md);
+
+    background:rgba(8,11,24,.78);
+    backdrop-filter:blur(12px);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.04),
+        0 12px 34px rgba(0,0,0,.22);
+}
+
+.jogador-um{
+    border-color:rgba(66,165,255,.24);
+}
+
+.jogador-dois{
+    border-color:rgba(255,90,122,.22);
+}
+
+.jogador-avatar{
+    font-size:19px;
+}
+
+.jogador-info{
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+
+    text-align:left;
+}
+
+.nome-j1,
+.nome-j2{
+    overflow:hidden;
+
+    font-size:14px;
+    font-weight:900;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+
+.nome-j1{
+    color:var(--player-one);
+    text-shadow:0 0 12px rgba(66,165,255,.40);
+}
+
+.nome-j2{
+    color:var(--player-two);
+    text-shadow:0 0 12px rgba(255,90,122,.35);
+}
+
+.jogador-legenda{
+    margin-top:2px;
+
+    color:var(--text-muted);
+    font-size:9px;
+    font-weight:700;
+}
+
+.pontuacao{
+    display:grid;
+    place-items:center;
+
+    width:46px;
+    height:46px;
+
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:14px;
+
+    background:rgba(255,255,255,.045);
+
+    font-size:23px;
+    font-weight:900;
+}
+
+.placar-versus{
+    display:grid;
+    place-items:center;
+
+    padding:0 2px;
+
+    color:var(--text-muted);
+    font-size:10px;
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+.painel-tabuleiro{
+    display:flex;
+    justify-content:center;
+    width:100%;
+}
+
+.moldura-tabuleiro{
+    position:relative;
+
+    display:inline-block;
+    max-width:98vw;
+    padding:14px;
+
+    border:1px solid rgba(86,229,255,.18);
+    border-radius:var(--radius-xl);
+
+    background:
+        linear-gradient(180deg, rgba(16,23,43,.63), rgba(5,7,17,.74));
+
+    box-shadow:
+        0 24px 70px rgba(0,0,0,.42),
+        inset 0 1px 0 rgba(255,255,255,.05),
+        0 0 30px rgba(40,168,255,.08);
+}
+
+.canto{
+    position:absolute;
+    width:28px;
+    height:28px;
+    pointer-events:none;
+}
+
+.canto-superior-esquerdo{
+    top:8px;
+    left:8px;
+    border-top:2px solid var(--neon-cyan);
+    border-left:2px solid var(--neon-cyan);
+    border-radius:8px 0 0 0;
+}
+
+.canto-superior-direito{
+    top:8px;
+    right:8px;
+    border-top:2px solid var(--neon-purple);
+    border-right:2px solid var(--neon-purple);
+    border-radius:0 8px 0 0;
+}
+
+.canto-inferior-esquerdo{
+    bottom:8px;
+    left:8px;
+    border-bottom:2px solid var(--neon-blue);
+    border-left:2px solid var(--neon-blue);
+    border-radius:0 0 0 8px;
+}
+
+.canto-inferior-direito{
+    right:8px;
+    bottom:8px;
+    border-right:2px solid var(--neon-pink);
+    border-bottom:2px solid var(--neon-pink);
+    border-radius:0 0 8px 0;
+}
+
+#container-tabuleiro{
+    display:inline-block;
+
+    max-width:95vw;
+    max-height:65vh;
+    padding:clamp(8px, 2.6vw, 26px);
+
+    overflow:hidden;
+
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:24px;
+
+    background:rgba(255,255,255,.055);
+    backdrop-filter:blur(10px);
+
+    box-shadow:
+        0 0 26px rgba(0,0,0,.48),
+        inset 0 0 28px rgba(40,168,255,.035);
+}
+
+#tabuleiro{
+    display:grid;
+    gap:0;
+}
+
+/* =========================
+   TABULEIRO — REGRAS VISUAIS EXISTENTES
+   ========================= */
+.ponto{
+    position:relative;
+    z-index:20;
+
+    width:8px;
+    height:8px;
+
+    border-radius:50%;
+    background:#fff;
+
+    box-shadow:0 0 10px #fff;
+}
+
+.linha-h{
+    position:relative;
+    z-index:5;
+
+    width:calc(100% + 8px);
+    height:8px;
+    margin-right:-4px;
+    margin-left:-4px;
+
+    background:rgba(255,255,255,.25);
+
+    cursor:pointer;
+    transition:var(--transition-fast);
+}
+
+.linha-v{
+    position:relative;
+    z-index:5;
+
+    width:8px;
+    height:calc(100% + 8px);
+    margin-top:-4px;
+    margin-bottom:-4px;
+
+    background:rgba(255,255,255,.25);
+
+    cursor:pointer;
+    transition:var(--transition-fast);
+}
+
+.linha-h:hover,
+.linha-v:hover{
+    background:rgba(86,229,255,.50);
+    box-shadow:0 0 10px rgba(86,229,255,.35);
+}
+
+.caixa{
+    position:relative;
+
+    width:100%;
+    height:100%;
+
+    overflow:visible;
+    pointer-events:none;
+}
+
+.caixa::before{
+    content:"";
+
+    position:absolute;
+    z-index:1;
+
+    inset:-8px;
+
+    pointer-events:none;
+}
+
+.caixa.j1::before{
+    background:rgba(66,165,255,.55);
+}
+
+.caixa.j2::before{
+    background:rgba(255,90,122,.55);
+}
+
+.selecionada-j1{
+    background:var(--player-one) !important;
+    box-shadow:0 0 15px var(--player-one) !important;
+}
+
+.selecionada-j2{
+    background:var(--player-two) !important;
+    box-shadow:0 0 15px var(--player-two) !important;
+}
+
+/* =========================
+   RODAPÉ
+   ========================= */
+.rodape-global{
+    position:relative;
+    z-index:2;
+
+    display:flex;
+    justify-content:center;
+    gap:10px;
+
+    margin-top:20px;
+
+    color:rgba(127,139,165,.68);
+    font-size:9px;
+    font-weight:700;
+    letter-spacing:.7px;
+}
+
+.rodape-global span + span::before{
+    content:"•";
+    margin-right:10px;
+}
+
+/* =========================
+   RESPONSIVO
+   ========================= */
+@media (max-width:700px){
+    body{
+        padding:8px 6px 18px;
+        overflow-x:hidden;
+    }
+
+    .topo-jogo{
+        margin-bottom:12px;
+    }
+
+    .marca-sms{
+        gap:8px;
+        margin-bottom:9px;
+        padding:5px 10px;
+    }
+
+    .marca-simbolo{
+        transform:scale(.82);
+    }
+
+    .marca-nome{
+        font-size:9px;
+        letter-spacing:2.3px;
+    }
+
+    .marca-slogan{
+        display:none;
+    }
+
+    h1{
+        font-size:23px;
+    }
+
+    .subtitulo-principal{
+        display:none;
+    }
+
+    .painel-nebula,
+    .hub-principal,
+    .painel-formulario{
+        width:min(340px, 96vw);
+        margin-bottom:12px;
+        padding:20px 16px;
+    }
+
+    .cabecalho-hub{
+        margin-bottom:16px;
+    }
+
+    .cabecalho-hub h2{
+        font-size:20px;
+    }
+
+    .cabecalho-hub p{
+        font-size:11px;
+    }
+
+    .botao-principal{
+        min-height:65px;
+        padding:11px 12px;
+    }
+
+    .botao-icone{
+        width:40px;
+        height:40px;
+        flex-basis:40px;
+        font-size:19px;
+    }
+
+    .botao-conteudo strong{
+        font-size:14px;
+    }
+
+    .botao-conteudo small{
+        font-size:9px;
+    }
+
+    .botao-seta{
+        font-size:24px;
+    }
+
+    .recursos-hub{
+        gap:6px 10px;
+        margin-top:16px;
+        padding-top:13px;
+        font-size:8px;
+    }
+
+    .cabecalho-painel{
+        gap:12px;
+        margin-bottom:17px;
+        padding-bottom:15px;
+    }
+
+    .icone-painel{
+        width:46px;
+        height:46px;
+        flex-basis:46px;
+        font-size:21px;
+    }
+
+    .cabecalho-painel h2{
+        font-size:19px;
+    }
+
+    .cabecalho-painel p{
+        font-size:10px;
+    }
+
+    .grade-formulario,
+    .grade-ia{
+        grid-template-columns:1fr;
+        gap:13px;
+    }
+
+    .campo-largo{
+        grid-column:auto;
+    }
+
+    .campo label{
+        font-size:11px;
+    }
+
+    .campo input,
+    .campo select{
+        min-height:43px;
+        padding:9px 11px;
+        font-size:12px;
+    }
+
+    .nivel-legenda{
+        display:none;
+    }
+
+    .botoes-formulario{
+        grid-template-columns:1fr;
+        gap:9px;
+        margin-top:16px;
+    }
+
+    .botoes-formulario .btn-secundario{
+        grid-column:auto;
+    }
+
+    .botao-nebula,
+    button{
+        width:100%;
+        min-height:44px;
+        padding:10px 14px;
+        font-size:13px;
+    }
+
+    .hud-partida{
+        width:100%;
+        margin-bottom:7px;
+    }
+
+    .hud-topo{
+        grid-template-columns:1fr;
+        gap:6px;
+        margin-bottom:7px;
+    }
+
+    .sala-info,
+    .indicador-turno{
+        min-height:auto;
+        padding:7px 10px;
+        border-radius:11px;
+    }
+
+    .sala-info{
+        align-items:center;
+        text-align:center;
+    }
+
+    #codigoSala{
+        font-size:11px;
+    }
+
+    #status{
+        font-size:9px;
+    }
+
+    .indicador-turno{
+        justify-content:center;
+        min-width:0;
+    }
+
+    #turno{
+        font-size:12px;
+        text-align:center;
+    }
+
+    .placar-nebula{
+        gap:5px;
+    }
+
+    .jogador{
+        grid-template-columns:auto 1fr auto;
+        gap:5px;
+        padding:7px 8px;
+        border-radius:11px;
+    }
+
+    .jogador-avatar{
+        display:none;
+    }
+
+    .nome-j1,
+    .nome-j2{
+        max-width:78px;
+        font-size:10px;
+    }
+
+    .jogador-legenda{
+        display:none;
+    }
+
+    .pontuacao{
+        width:30px;
+        height:30px;
+        border-radius:9px;
+        font-size:15px;
+    }
+
+    .placar-versus{
+        padding:0;
+        font-size:7px;
+    }
+
+    .moldura-tabuleiro{
+        max-width:100vw;
+        padding:6px;
+        border-radius:20px;
+    }
+
+    .canto{
+        display:none;
+    }
+
+    #container-tabuleiro{
+        max-width:100vw;
+        max-height:65vh;
+        padding:6px;
+        overflow:auto;
+        border-radius:16px;
+    }
+
+    .ponto{
+        width:4px !important;
+        height:4px !important;
+    }
+
+    .linha-h{
+        width:100% !important;
+        height:5px !important;
+    }
+
+    .linha-v{
+        width:5px !important;
+        height:100% !important;
+    }
+
+    .rodape-global{
+        display:none;
+    }
+}
+
+/* =========================
+   ACESSIBILIDADE
+   ========================= */
+@media (prefers-reduced-motion:reduce){
+    *,
+    *::before,
+    *::after{
+        scroll-behavior:auto !important;
+        transition-duration:.01ms !important;
+        animation-duration:.01ms !important;
+        animation-iteration-count:1 !important;
+    }
+}
+
+
+/* ============================================================
+   ETAPA 2.1 — CORREÇÃO DE LAYOUT DOS FORMULÁRIOS
+   Ajusta somente os menus Online e IA.
+   ============================================================ */
+
+#menu.painel-formulario,
+#menuIA.painel-formulario{
+    width:min(760px, 94vw);
+    padding:34px;
+}
+
+#menu .cabecalho-painel,
+#menuIA .cabecalho-painel{
+    width:100%;
+}
+
+#menu .grade-formulario,
+#menuIA .grade-formulario{
+    grid-template-columns:1fr;
+    gap:18px;
+}
+
+#menu .campo,
+#menuIA .campo,
+#menu .campo-largo,
+#menuIA .campo-largo{
+    grid-column:auto;
+    width:100%;
+}
+
+#menu .campo input,
+#menu .campo select,
+#menuIA .campo input,
+#menuIA .campo select{
+    width:100%;
+    min-width:0;
+}
+
+#menu .botoes-formulario,
+#menuIA .botoes-formulario{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:12px;
+    width:100%;
+}
+
+#menu .botoes-formulario button,
+#menuIA .botoes-formulario button{
+    width:100%;
+    min-height:52px;
+    white-space:normal;
+    line-height:1.25;
+}
+
+#menu .botoes-formulario .btn-secundario,
+#menuIA .botoes-formulario .btn-secundario{
+    grid-column:auto;
+}
+
+#menuIA .nivel-legenda{
+    width:100%;
+    margin-top:18px;
+    grid-template-columns:repeat(3, 1fr);
+    gap:10px;
+}
+
+#menuIA .nivel-legenda span{
+    display:block;
+    padding:10px 12px;
+    border:1px solid rgba(255,255,255,.07);
+    border-radius:10px;
+    background:rgba(255,255,255,.025);
+}
+
+@media (max-width:900px){
+    #menu.painel-formulario,
+    #menuIA.painel-formulario{
+        width:min(680px, 94vw);
+    }
+}
+
+@media (max-width:700px){
+    #menu.painel-formulario,
+    #menuIA.painel-formulario{
+        width:min(340px, 96vw);
+        padding:20px 16px;
+    }
+
+    #menuIA .nivel-legenda{
+        display:none;
+    }
+
+    #menu .botoes-formulario button,
+    #menuIA .botoes-formulario button{
+        min-height:46px;
+        font-size:13px;
+    }
+}
+
+
+/* ============================================================
+   ETAPA 2.2 — REFINAMENTO DO MENU IA
+   ============================================================ */
+
+/* Campo de nome totalmente livre para exibir o placeholder */
+#menuIA .grade-formulario{
+    grid-template-columns:1fr;
+}
+
+#menuIA .campo,
+#menuIA .campo-largo{
+    grid-column:auto;
+    width:100%;
+}
+
+#menuIA #nomeIA{
+    width:100%;
+    min-width:0;
+}
+
+/* Descrição apenas do nível atualmente selecionado */
+.nivel-selecionado{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+
+    width:100%;
+    margin-top:18px;
+    padding:14px 16px;
+
+    border:1px solid rgba(86,229,255,.16);
+    border-radius:14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(40,168,255,.07),
+            rgba(152,87,255,.06)
+        );
+
+    text-align:left;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.04),
+        0 0 18px rgba(40,168,255,.05);
+}
+
+.nivel-selecionado-icone{
+    display:grid;
+    place-items:center;
+
+    width:38px;
+    height:38px;
+    flex:0 0 38px;
+
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:12px;
+
+    background:rgba(255,255,255,.045);
+
+    font-size:18px;
+}
+
+.nivel-selecionado strong{
+    display:block;
+
+    color:var(--text-primary);
+    font-size:13px;
+}
+
+.nivel-selecionado p{
+    margin-top:3px;
+
+    color:var(--text-secondary);
+    font-size:11px;
+    line-height:1.45;
+}
+
+@media (max-width:700px){
+    .nivel-selecionado{
+        margin-top:13px;
+        padding:11px 12px;
+    }
+
+    .nivel-selecionado-icone{
+        width:34px;
+        height:34px;
+        flex-basis:34px;
+        font-size:16px;
+    }
+
+    .nivel-selecionado strong{
+        font-size:12px;
+    }
+
+    .nivel-selecionado p{
+        font-size:10px;
+    }
+}
+
+
+/* ============================================================
+   ETAPA 4.0 — TELA DE RESULTADO
+   ============================================================ */
+.resultado-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9000;
+    place-items: center;
+    padding: 24px;
+    background: rgba(2, 4, 14, .78);
+    backdrop-filter: blur(12px);
+    animation: resultadoFade .35s ease both;
+}
+.resultado-card {
+    width: min(560px, 94vw);
+    text-align: center;
+    padding: 34px 32px 30px;
+    border: 1px solid rgba(79, 163, 255, .38);
+    box-shadow: 0 0 55px rgba(79, 163, 255, .16), inset 0 0 35px rgba(168, 85, 247, .06);
+    animation: resultadoEntrada .5s cubic-bezier(.2,.85,.25,1.15) both;
+}
+.resultado-icone { font-size: 52px; filter: drop-shadow(0 0 18px rgba(0,229,255,.45)); margin-bottom: 6px; }
+.resultado-kicker { display:block; font-size:11px; letter-spacing:.28em; color:#a0a8c0; margin-bottom:8px; }
+.resultado-card h2 { margin:0; font-size:clamp(28px,5vw,42px); color:#fff; text-shadow:0 0 22px rgba(0,229,255,.28); }
+.resultado-subtitulo { color:#a0a8c0; margin:8px 0 24px; }
+.resultado-placar { display:grid; grid-template-columns:1fr auto 1fr; gap:14px; align-items:center; margin:20px 0 24px; }
+.resultado-jogador { padding:16px 12px; border-radius:16px; background:rgba(255,255,255,.035); border:1px solid rgba(255,255,255,.09); }
+.resultado-jogador span { display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; font-size:14px; color:#c9d1e8; }
+.resultado-jogador strong { display:block; margin-top:5px; font-size:38px; line-height:1; }
+.resultado-azul strong { color:#42a5ff; text-shadow:0 0 18px rgba(66,165,255,.45); }
+.resultado-rosa strong { color:#ff5a7a; text-shadow:0 0 18px rgba(255,90,122,.4); }
+.resultado-x { color:#6f7894; font-weight:800; font-size:20px; }
+.resultado-revanche { margin:0 auto 18px; max-width:270px; }
+.resultado-revanche label { display:block; color:#a0a8c0; font-size:12px; margin-bottom:7px; }
+.resultado-revanche select { width:100%; }
+.resultado-espera { color:#a0a8c0; padding:12px; border:1px solid rgba(79,163,255,.18); border-radius:12px; background:rgba(79,163,255,.05); }
+.resultado-acoes { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:18px; }
+.resultado-acoes .botao-nebula { min-width:190px; justify-content:center; }
+@keyframes resultadoFade { from { opacity:0; } to { opacity:1; } }
+@keyframes resultadoEntrada { from { opacity:0; transform:translateY(22px) scale(.96); } to { opacity:1; transform:none; } }
+@media (max-width:560px) {
+    .resultado-overlay { padding:12px; }
+    .resultado-card { padding:26px 18px 22px; }
+    .resultado-placar { gap:8px; }
+    .resultado-jogador { padding:13px 8px; }
+    .resultado-jogador strong { font-size:32px; }
+    .resultado-acoes { flex-direction:column; }
+    .resultado-acoes .botao-nebula { width:100%; }
+}
+
+
+/* ===== ETAPA 4.2 — CONTROLE DE ÁUDIO ===== */
+.btn-som {
+    width: 44px; height: 44px; flex: 0 0 44px; border-radius: 50%;
+    border: 1px solid rgba(79,163,255,.42); background: rgba(5,10,28,.72);
+    color: #fff; font-size: 19px; cursor: pointer; display:grid; place-items:center;
+    box-shadow: inset 0 0 14px rgba(0,229,255,.06), 0 0 14px rgba(79,163,255,.08);
+    transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+.btn-som:hover { transform: translateY(-1px) scale(1.04); border-color: rgba(0,229,255,.8); box-shadow: 0 0 18px rgba(0,229,255,.18); }
+.btn-som:active { transform: scale(.96); }
+@media (max-width:700px) { .btn-som { width:40px; height:40px; flex-basis:40px; font-size:17px; } }
+
+
+/* ===== ETAPA 4.2.1 — VOLUME APRIMORADO ===== */
+.controle-audio { display:flex; align-items:center; gap:8px; padding:5px 9px 5px 5px; border:1px solid rgba(79,163,255,.22); border-radius:24px; background:rgba(5,10,28,.52); }
+.volume-som { width:92px; accent-color:#00e5ff; cursor:pointer; }
+.volume-valor { min-width:34px; color:#cfefff; font-size:11px; font-weight:700; text-align:right; }
+@media (max-width:700px) { .controle-audio { gap:5px; padding-right:7px; } .volume-som { width:58px; } .volume-valor { display:none; } }
+
+
+/* =====================================================
+   ETAPA 4.3 — FEEDBACK VISUAL DE PARTIDA
+   ===================================================== */
+.linha-feedback{ animation:linhaMarcada43 .24s ease-out; }
+@keyframes linhaMarcada43{
+    0%{ transform:scale(1); filter:brightness(1); }
+    45%{ transform:scale(1.10); filter:brightness(1.9); }
+    100%{ transform:scale(1); filter:brightness(1); }
+}
+
+.caixa-feedback::before{ animation:caixaConquistada43 .48s cubic-bezier(.2,.85,.25,1); }
+@keyframes caixaConquistada43{
+    0%{ opacity:.15; transform:scale(.72); filter:brightness(2.1); }
+    55%{ opacity:1; transform:scale(1.08); filter:brightness(1.55); }
+    100%{ opacity:1; transform:scale(1); filter:brightness(1); }
+}
+
+.ponto-flutuante{
+    position:absolute; z-index:20; left:50%; top:50%;
+    transform:translate(-50%,-50%); pointer-events:none;
+    font-size:clamp(13px,2vw,20px); font-weight:1000;
+    text-shadow:0 0 12px currentColor,0 2px 5px rgba(0,0,0,.9);
+    animation:pontoFlutuante43 .72s ease-out forwards;
+}
+.ponto-j1{ color:#bde9ff; }
+.ponto-j2{ color:#ffc1d0; }
+@keyframes pontoFlutuante43{
+    0%{ opacity:0; transform:translate(-50%,-30%) scale(.65); }
+    25%{ opacity:1; transform:translate(-50%,-55%) scale(1.12); }
+    100%{ opacity:0; transform:translate(-50%,-145%) scale(.92); }
+}
+
+.placar-pop{ animation:placarPop43 .38s cubic-bezier(.2,1.35,.45,1); }
+@keyframes placarPop43{
+    0%{ transform:scale(1); }
+    45%{ transform:scale(1.28); filter:brightness(1.65); }
+    100%{ transform:scale(1); filter:brightness(1); }
+}
+
+.jogador{ transition:border-color .28s ease, box-shadow .28s ease, transform .28s ease, opacity .28s ease; }
+.jogador.jogador-ativo{ transform:translateY(-2px); opacity:1; }
+.jogador-um.jogador-ativo{
+    border-color:rgba(66,165,255,.78);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 22px rgba(66,165,255,.20),0 12px 34px rgba(0,0,0,.22);
+}
+.jogador-dois.jogador-ativo{
+    border-color:rgba(255,90,122,.72);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 0 22px rgba(255,90,122,.18),0 12px 34px rgba(0,0,0,.22);
+}
+
+@media (prefers-reduced-motion: reduce){
+    .linha-feedback,.caixa-feedback::before,.ponto-flutuante,.placar-pop{ animation-duration:.01ms !important; }
+}
+
+
+/* ============================================================
+   ETAPA 4.3.2 — RESPONSIVIDADE EQUILIBRADA DO TABULEIRO
+   Prioriza leitura e toque; evita miniaturização excessiva.
+   ============================================================ */
+#container-tabuleiro{
+    max-height:none;
+    overflow:visible;
+}
+
+body.grade-grande .area-jogo{
+    gap:10px;
+}
+
+body.grade-grande .placar-jogo{
+    margin-bottom:4px;
+}
+
+body.grade-gigante .moldura-tabuleiro{
+    padding:9px;
+}
+
+body.grade-gigante #container-tabuleiro{
+    padding:12px;
+}
+
+@media (max-width:700px){
+    #container-tabuleiro{
+        max-height:none !important;
+        overflow:visible !important;
+    }
+    .ponto{
+        width:6px !important;
+        height:6px !important;
+    }
+    body.grade-grande .moldura-tabuleiro{
+        padding:4px;
+    }
+    body.grade-grande #container-tabuleiro{
+        padding:5px;
+    }
+}
+
+/* ============================================================
+   ETAPA 4.3.3 — MOBILE: MENU + SCROLL SEGURO
+   Corrige corte dos botoes em retrato e mantem toque confortavel.
+   ============================================================ */
+@media (max-width:700px){
+    html, body{
+        width:100%;
+        min-height:100%;
+        height:auto !important;
+        overflow-x:hidden !important;
+        overflow-y:auto !important;
+    }
+
+    body{
+        padding:6px 8px 22px !important;
+        background-attachment:scroll;
+        -webkit-overflow-scrolling:touch;
+    }
+
+    .conteudo-principal{
+        width:100%;
+        min-height:auto;
+        overflow:visible !important;
+    }
+
+    #menu.painel-formulario,
+    #menuIA.painel-formulario{
+        width:calc(100vw - 16px) !important;
+        max-width:420px !important;
+        height:auto !important;
+        max-height:none !important;
+        margin:0 auto 14px !important;
+        padding:14px 12px !important;
+        overflow:visible !important;
+    }
+
+    #menu > *,
+    #menuIA > *{
+        max-width:100%;
+    }
+
+    #menu .cabecalho-painel,
+    #menuIA .cabecalho-painel{
+        display:flex !important;
+        width:100% !important;
+        gap:10px !important;
+        margin-bottom:10px !important;
+        padding-bottom:10px !important;
+    }
+
+    #menu .icone-painel,
+    #menuIA .icone-painel{
+        width:40px !important;
+        height:40px !important;
+        flex:0 0 40px !important;
+        font-size:18px !important;
+        border-radius:12px !important;
+    }
+
+    #menu .cabecalho-painel h2,
+    #menuIA .cabecalho-painel h2{
+        margin:2px 0 1px !important;
+        font-size:17px !important;
+    }
+
+    #menu .cabecalho-painel p,
+    #menuIA .cabecalho-painel p{
+        font-size:9px !important;
+        line-height:1.25 !important;
+    }
+
+    #menu .grade-formulario,
+    #menuIA .grade-formulario,
+    #menuIA .grade-ia{
+        display:grid !important;
+        grid-template-columns:minmax(0,1fr) !important;
+        width:100% !important;
+        gap:8px !important;
+    }
+
+    #menu .campo,
+    #menuIA .campo,
+    #menu .campo-largo,
+    #menuIA .campo-largo{
+        display:flex !important;
+        grid-column:1 !important;
+        width:100% !important;
+        min-width:0 !important;
+        gap:4px !important;
+    }
+
+    #menu .campo label,
+    #menuIA .campo label{
+        font-size:10px !important;
+    }
+
+    #menu .campo input,
+    #menu .campo select,
+    #menuIA .campo input,
+    #menuIA .campo select{
+        width:100% !important;
+        min-width:0 !important;
+        min-height:39px !important;
+        height:39px !important;
+        padding:7px 10px !important;
+        font-size:12px !important;
+    }
+
+    #menuIA .nivel-selecionado{
+        width:100% !important;
+        margin:8px 0 0 !important;
+        padding:8px 10px !important;
+        gap:8px !important;
+    }
+
+    #menuIA .nivel-selecionado-icone{
+        width:30px !important;
+        height:30px !important;
+        flex:0 0 30px !important;
+        font-size:14px !important;
+    }
+
+    #menuIA .nivel-selecionado strong{ font-size:11px !important; }
+    #menuIA .nivel-selecionado p{ font-size:9px !important; line-height:1.3 !important; }
+
+    #menu .botoes-formulario,
+    #menuIA .botoes-formulario{
+        display:grid !important;
+        grid-template-columns:1fr !important;
+        width:100% !important;
+        gap:7px !important;
+        margin-top:10px !important;
+        position:relative;
+        z-index:5;
+    }
+
+    #menu .botoes-formulario button,
+    #menuIA .botoes-formulario button{
+        display:flex !important;
+        width:100% !important;
+        min-height:42px !important;
+        padding:8px 10px !important;
+        font-size:12px !important;
+    }
+}
+
+/* Telefones baixos: reduz apenas o cabecalho, nunca esconde os botoes. */
+@media (max-width:700px) and (max-height:720px) and (orientation:portrait){
+    .topo-jogo{ margin-bottom:6px !important; }
+    .marca-sms{ margin-bottom:4px !important; }
+    h1{ font-size:20px !important; }
+    #menu .cabecalho-painel p,
+    #menuIA .cabecalho-painel p{ display:none; }
+    #menu.painel-formulario,
+    #menuIA.painel-formulario{ padding-top:11px !important; }
+}
+
+
+/* ============================================================
+   ETAPA 4.5 — ESTATISTICAS LOCAIS
+   ============================================================ */
+.btn-estatisticas{width:100%;margin:12px 0 4px;justify-content:center;}
+.estatisticas-card{max-width:560px;}
+.estatisticas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;margin:18px 0;}
+.estatisticas-grid>div{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:92px;padding:12px;border:1px solid rgba(86,229,255,.18);border-radius:14px;background:rgba(3,10,28,.55);box-shadow:inset 0 0 18px rgba(79,163,255,.05);}
+.estatisticas-grid span{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:#a0a8c0;text-align:center;}
+.estatisticas-grid strong{margin-top:7px;font-size:25px;color:#fff;text-shadow:0 0 14px rgba(86,229,255,.35);}
+.estatisticas-acoes{flex-wrap:wrap;}
+@media (max-width:700px){.estatisticas-card{width:calc(100vw - 20px)!important;max-height:calc(100dvh - 20px);overflow-y:auto;padding:18px 14px!important}.estatisticas-grid{grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0}.estatisticas-grid>div{min-height:72px;padding:8px}.estatisticas-grid strong{font-size:21px}.estatisticas-acoes{display:grid!important;grid-template-columns:1fr!important;width:100%}.estatisticas-acoes button{width:100%!important}}
+
+
+/* ============================================================
+   ETAPA 4.6 - COMO JOGAR / PREPARACAO PARA O BETA
+   ============================================================ */
+.acoes-secundarias-hub{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-top:10px}
+.acoes-secundarias-hub .botao-nebula{width:100%;justify-content:center}
+.como-jogar-card{width:min(650px,calc(100vw - 24px));max-height:90vh;overflow-y:auto}
+.boas-vindas-card{width:min(480px,calc(100vw - 24px));text-align:center}
+.boas-vindas-acoes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.instrucoes-jogo{display:grid;gap:10px;margin:18px 0;text-align:left}
+.instrucao-item{display:grid;grid-template-columns:38px 1fr;gap:12px;align-items:start;padding:11px 12px;border:1px solid rgba(86,229,255,.16);background:rgba(4,12,30,.48);border-radius:12px}
+.instrucao-item>span{display:grid;place-items:center;width:34px;height:34px;border-radius:50%;font-weight:800;color:#fff;background:linear-gradient(135deg,rgba(0,229,255,.38),rgba(168,85,247,.45));box-shadow:0 0 18px rgba(0,229,255,.15)}
+.instrucao-item strong{display:block;color:#fff;margin:1px 0 4px}
+.instrucao-item p{margin:0;color:#b8c3d9;line-height:1.4;font-size:.92rem}
+.dica-como-jogar{display:flex;gap:10px;align-items:flex-start;text-align:left;padding:12px 14px;margin:4px 0 16px;border-radius:12px;background:rgba(168,85,247,.09);border:1px solid rgba(168,85,247,.25);color:#cbd5ea}
+.dica-como-jogar strong{white-space:nowrap;color:#56e5ff}
+@media(max-width:700px){
+ .acoes-secundarias-hub,.boas-vindas-acoes{grid-template-columns:1fr}
+ .como-jogar-card{max-height:88dvh;padding:18px 14px!important}
+ .instrucao-item{grid-template-columns:32px 1fr;gap:9px;padding:9px}
+ .instrucao-item>span{width:30px;height:30px}
+ .instrucao-item p{font-size:.86rem}
+ .dica-como-jogar{flex-direction:column;gap:4px;font-size:.86rem}
+}

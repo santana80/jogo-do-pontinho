@@ -3,109 +3,457 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo dos Pontinhos Online</title>
-    <link rel="stylesheet" href="style.css">
+
+    <meta
+        name="description"
+        content="Jogo dos Pontinhos da SMS Studio. Jogue online ou enfrente a inteligência artificial.">
+
+    <title>Jogo dos Pontinhos — Nebula Edition</title>
+
+    <link rel="stylesheet" href="css/style.css?v=450">
+    <link rel="stylesheet" href="css/animations.css?v=33">
 </head>
 <body>
-
-    <h1>🌌 Jogo dos Pontinhos Online 🌌</h1>
-
-    <div id="menuInicial" class="menu-opcoes">
-        <button id="btnModoOnline">🎮 Jogar Online</button>
-        <button id="btnModoIA">🤖 Jogar contra IA</button>
-    </div>
-
-    <div id="menuIA" class="painel-menu" style="display:none;">
-        <div class="campo">
-            <label>Seu Nome</label>
-            <input type="text" id="nomeIA" placeholder="Digite seu nome">
+    <!-- SMS Studio Splash — Etapa 3.3 -->
+    <div id="smsSplash" class="sms-splash" aria-label="Abertura SMS Studio">
+        <div class="sms-intro-glow" aria-hidden="true"></div>
+        <div class="sms-intro-particles" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span>
         </div>
-
-        <div class="campo">
-            <label>Dificuldade</label>
-            <select id="nivelIA">
-                <option value="facil">Fácil</option>
-                <option value="medio">Médio</option>
-                <option value="dificil">Difícil</option>
-            </select>
-        </div>
-
-        <div class="campo">
-            <label>Tamanho do Tabuleiro</label>
-            <select id="tamanhoIA">
-                <option value="3">3 x 3</option>
-                <option value="4">4 x 4</option>
-                <option value="5">5 x 5</option>
-                <option value="6">6 x 6</option>
-                <option value="8">8 x 8</option>
-                <option value="10">10 x 10</option>
-            </select>
-        </div>
-
-        <div class="botoes">
-            <button id="btnIniciarIA">Iniciar Partida</button>
-            <button id="btnVoltarIA" class="btn-secundario">Voltar</button>
-        </div>
-    </div>
-
-    <div id="menu" style="display:none;">
-        <div class="campo">
-            <label>Seu Nome</label>
-            <input type="text" id="nome" placeholder="Digite seu nome">
-        </div>
-
-        <div class="campo">
-            <label>Tamanho do Tabuleiro</label>
-            <select id="tamanho">
-                <option value="3">3 x 3</option>
-                <option value="4">4 x 4</option>
-                <option value="5">5 x 5</option>
-                <option value="6">6 x 6</option>
-                <option value="8">8 x 8</option>
-                <option value="10">10 x 10</option>
-            </select>
-        </div>
-
-        <div class="botoes">
-            <button id="btnCriarSala">Criar Sala</button>
-            <button id="btnEntrarSala">Entrar em Sala</button>
-            <button id="btnVoltarOnline" class="btn-secundario">Voltar</button>
-        </div>
-    </div>
-
-    <button id="btnNovaPartida" type="button" onclick="chamarNovaPartida()" style="display:none;">
-        Jogar novamente
-    </button>
-
-    <div id="areaJogo" style="display:none;">
-        <div id="salaInfo">
-            <h2 id="codigoSala"></h2>
-            <h3 id="status">Informe seu nome para começar</h3>
-        </div>
-
-        <div id="placar">
-            <div class="jogador">
-                <span id="nome1" class="nome-j1">Jogador 1</span>
-                :
-                <span id="jogador1">0</span>
+        <div class="sms-intro-logo">
+            <div class="sms-orbit sms-orbit-a"><span class="sms-node n1"></span><span class="sms-node n2"></span></div>
+            <div class="sms-orbit sms-orbit-b"><span class="sms-node n3"></span><span class="sms-node n4"></span></div>
+            <div class="sms-orbit sms-orbit-c"><span class="sms-node n5"></span></div>
+            <div class="sms-core">
+                <div class="sms-word" data-text="SMS">SMS</div>
+                <div class="sms-divider" aria-hidden="true"></div>
+                <div class="sms-studio-word">STUDIO</div>
             </div>
+        </div>
+        <div class="sms-intro-slogan">Connecting Ideas. Creating Experiences.</div>
+        <div class="sms-splash-skip">Clique ou pressione qualquer tecla para pular</div>
+    </div>
 
-            <div class="jogador">
-                <span id="nome2" class="nome-j2">Jogador 2</span>
-                :
-                <span id="jogador2">0</span>
+
+    <div class="nebula-ambient" aria-hidden="true">
+        <span class="estrela estrela-1"></span>
+        <span class="estrela estrela-2"></span>
+        <span class="estrela estrela-3"></span>
+        <span class="estrela estrela-4"></span>
+        <span class="estrela estrela-5"></span>
+        <span class="estrela estrela-6"></span>
+    </div>
+
+    <header class="topo-jogo">
+        <div class="marca-sms">
+            <span class="marca-simbolo" aria-hidden="true">
+                <i></i><i></i><i></i><i></i><i></i>
+            </span>
+
+            <div class="marca-textos">
+                <span class="marca-nome">SMS STUDIO</span>
+                <span class="marca-slogan">Connecting Ideas. Creating Experiences.</span>
             </div>
         </div>
 
-        <h2 id="turno">Aguardando jogadores...</h2>
+        <h1>
+            <span class="titulo-icone" aria-hidden="true">🌌</span>
+            Jogo dos Pontinhos
+        </h1>
 
-        <div id="container-tabuleiro">
-            <div id="tabuleiro"></div>
+        <p class="subtitulo-principal">
+            Conecte os pontos, conquiste caixas e domine o tabuleiro.
+        </p>
+    </header>
+
+    <main class="conteudo-principal">
+
+        <!-- ====================================================
+             HUB PRINCIPAL
+             ==================================================== -->
+        <section id="menuInicial" class="painel-nebula hub-principal">
+
+            <div class="painel-detalhe-superior"></div>
+
+            <div class="cabecalho-hub">
+                <span class="etiqueta-versao">NEBULA EDITION</span>
+                <h2>Escolha como jogar</h2>
+                <p>Enfrente outro jogador online ou desafie a inteligência artificial.</p>
+            </div>
+
+            <div class="acoes-hub">
+                <button id="btnModoOnline" class="botao-nebula botao-principal">
+                    <span class="botao-icone" aria-hidden="true">🌐</span>
+
+                    <span class="botao-conteudo">
+                        <strong>Jogar Online</strong>
+                        <small>Crie uma sala e convide outra pessoa</small>
+                    </span>
+
+                    <span class="botao-seta" aria-hidden="true">›</span>
+                </button>
+
+                <button id="btnModoIA" class="botao-nebula botao-principal">
+                    <span class="botao-icone" aria-hidden="true">🤖</span>
+
+                    <span class="botao-conteudo">
+                        <strong>Jogar contra IA</strong>
+                        <small>Escolha o nível e jogue imediatamente</small>
+                    </span>
+
+                    <span class="botao-seta" aria-hidden="true">›</span>
+                </button>
+            </div>
+
+            <div class="acoes-secundarias-hub">
+                <button id="btnComoJogar" class="botao-nebula btn-secundario btn-como-jogar" type="button">❓ Como Jogar</button>
+                <button id="btnEstatisticas" class="botao-nebula btn-secundario btn-estatisticas" type="button">📊 Estatísticas</button>
+            </div>
+
+            <div class="recursos-hub">
+                <span>● Multiplayer online</span>
+                <span>● Três níveis de IA</span>
+                <span>● PC e celular</span>
+            </div>
+
+            <div class="rodape-painel">
+                v2.0 • SMS Studio
+            </div>
+        </section>
+
+        <!-- ====================================================
+             MENU ONLINE
+             ==================================================== -->
+        <section id="menu" class="painel-nebula painel-formulario" style="display:none;">
+
+            <div class="painel-detalhe-superior"></div>
+
+            <div class="cabecalho-painel">
+                <span class="icone-painel" aria-hidden="true">🌐</span>
+
+                <div>
+                    <span class="etiqueta-painel">MULTIPLAYER</span>
+                    <h2>Jogar Online</h2>
+                    <p>Crie uma sala ou entre em uma partida usando o código.</p>
+                </div>
+            </div>
+
+            <div class="grade-formulario">
+
+                <div class="campo">
+                    <label for="nome">
+                        <span aria-hidden="true">👤</span>
+                        Seu nome
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nome"
+                        placeholder="Digite seu nome"
+                        maxlength="24"
+                        autocomplete="off">
+                </div>
+
+                <div class="campo">
+                    <label for="tamanho">
+                        <span aria-hidden="true">🎲</span>
+                        Tamanho do tabuleiro
+                    </label>
+
+                    <select id="tamanho">
+                        <option value="3">3 × 3</option>
+                        <option value="4">4 × 4</option>
+                        <option value="5">5 × 5</option>
+                        <option value="6">6 × 6</option>
+                        <option value="8">8 × 8</option>
+                        <option value="10">10 × 10</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="botoes botoes-formulario">
+                <button id="btnCriarSala" class="botao-nebula botao-acao">
+                    ✨ Criar Sala
+                </button>
+
+                <button id="btnEntrarSala" class="botao-nebula botao-acao">
+                    🚪 Entrar em Sala
+                </button>
+
+                <button id="btnVoltarOnline" class="botao-nebula btn-secundario">
+                    ← Voltar ao menu
+                </button>
+            </div>
+        </section>
+
+        <!-- ====================================================
+             MENU IA
+             ==================================================== -->
+        <section id="menuIA" class="painel-nebula painel-formulario" style="display:none;">
+
+            <div class="painel-detalhe-superior"></div>
+
+            <div class="cabecalho-painel">
+                <span class="icone-painel" aria-hidden="true">🤖</span>
+
+                <div>
+                    <span class="etiqueta-painel">MODO SOLO</span>
+                    <h2>Jogar contra IA</h2>
+                    <p>Escolha seu adversário e prepare a estratégia.</p>
+                </div>
+            </div>
+
+            <div class="grade-formulario grade-ia">
+
+                <div class="campo campo-largo">
+                    <label for="nomeIA">
+                        <span aria-hidden="true">👤</span>
+                        Seu nome
+                    </label>
+
+                    <input
+                        type="text"
+                        id="nomeIA"
+                        placeholder="Digite seu nome"
+                        maxlength="24"
+                        autocomplete="off">
+                </div>
+
+                <div class="campo">
+                    <label for="nivelIA">
+                        <span aria-hidden="true">🧠</span>
+                        Dificuldade
+                    </label>
+
+                    <select id="nivelIA">
+                        <option value="facil">Explorer — Fácil</option>
+                        <option value="medio">Strategist — Médio</option>
+                        <option value="dificil">Nexus — Difícil</option>
+                    </select>
+                </div>
+
+                <div class="campo">
+                    <label for="tamanhoIA">
+                        <span aria-hidden="true">🎲</span>
+                        Tamanho do tabuleiro
+                    </label>
+
+                    <select id="tamanhoIA">
+                        <option value="3">3 × 3</option>
+                        <option value="4">4 × 4</option>
+                        <option value="5">5 × 5</option>
+                        <option value="6">6 × 6</option>
+                        <option value="8">8 × 8</option>
+                        <option value="10">10 × 10</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div id="descricaoNivelIA" class="nivel-selecionado">
+                <span class="nivel-selecionado-icone" aria-hidden="true">🟢</span>
+
+                <div>
+                    <strong>Explorer</strong>
+                    <p>Joga de forma descontraída e é ideal para começar.</p>
+                </div>
+            </div>
+
+            <div class="botoes botoes-formulario">
+                <button id="btnIniciarIA" class="botao-nebula botao-acao">
+                    🚀 Iniciar Partida
+                </button>
+
+                <button id="btnVoltarIA" class="botao-nebula btn-secundario">
+                    ← Voltar ao menu
+                </button>
+            </div>
+        </section>
+
+        <!-- ====================================================
+             TELA DE RESULTADO / FIM DE PARTIDA
+             ==================================================== -->
+
+        <div id="modalBoasVindas" class="resultado-overlay" style="display:none;" aria-hidden="true">
+            <section class="resultado-card painel-nebula boas-vindas-card" role="dialog" aria-modal="true" aria-labelledby="boasVindasTitulo">
+                <div class="resultado-icone">👋</div>
+                <span class="resultado-kicker">BEM-VINDO</span>
+                <h2 id="boasVindasTitulo">Jogo dos Pontinhos</h2>
+                <p class="resultado-subtitulo">Nunca jogou? Aprenda em menos de 1 minuto.</p>
+                <div class="resultado-acoes boas-vindas-acoes">
+                    <button id="btnVerComoJogar" class="botao-nebula">❓ Ver como jogar</button>
+                    <button id="btnJaSeiJogar" class="botao-nebula btn-secundario">✓ Já sei jogar</button>
+                </div>
+            </section>
         </div>
-    </div>
+
+        <div id="modalComoJogar" class="resultado-overlay" style="display:none;" aria-hidden="true">
+            <section class="resultado-card painel-nebula como-jogar-card" role="dialog" aria-modal="true" aria-labelledby="comoJogarTitulo">
+                <div class="resultado-icone">🎮</div>
+                <span class="resultado-kicker">APRENDA EM MENOS DE 1 MINUTO</span>
+                <h2 id="comoJogarTitulo">Como Jogar</h2>
+                <div class="instrucoes-jogo">
+                    <div class="instrucao-item"><span>1</span><div><strong>Marque uma linha</strong><p>Na sua vez, escolha uma linha entre dois pontos.</p></div></div>
+                    <div class="instrucao-item"><span>2</span><div><strong>Feche um quadrado</strong><p>Complete o quarto lado de um quadrado para conquistá-lo e ganhar <b>1 ponto</b>.</p></div></div>
+                    <div class="instrucao-item"><span>3</span><div><strong>Fechou? Jogue novamente!</strong><p>Sempre que conquistar um quadrado, você continua jogando.</p></div></div>
+                    <div class="instrucao-item"><span>4</span><div><strong>Cuidado com o adversário</strong><p>Evite deixar quadrados com apenas um lado faltando. O adversário poderá fechá-los e continuar a sequência.</p></div></div>
+                    <div class="instrucao-item"><span>5</span><div><strong>Como vencer 🏆</strong><p>Quando todas as linhas forem preenchidas, vence quem tiver conquistado mais quadrados.</p></div></div>
+                </div>
+                <div class="dica-como-jogar"><strong>💡 DICA</strong><span>Grandes sequências de quadrados podem decidir a partida. Pense antes de entregar o terceiro lado!</span></div>
+                <div class="resultado-acoes"><button id="btnFecharComoJogar" class="botao-nebula">✓ Entendi, vamos jogar!</button></div>
+            </section>
+        </div>
+
+        <div id="modalEstatisticas" class="resultado-overlay" style="display:none;" aria-hidden="true">
+            <section class="resultado-card painel-nebula estatisticas-card" role="dialog" aria-modal="true" aria-labelledby="estatisticasTitulo">
+                <div class="resultado-icone">📊</div>
+                <span class="resultado-kicker">SEU DESEMPENHO</span>
+                <h2 id="estatisticasTitulo">Estatísticas</h2>
+                <p class="resultado-subtitulo">Dados salvos neste navegador.</p>
+                <div class="estatisticas-grid">
+                    <div><span>Partidas</span><strong id="statPartidas">0</strong></div>
+                    <div><span>Vitórias</span><strong id="statVitorias">0</strong></div>
+                    <div><span>Derrotas</span><strong id="statDerrotas">0</strong></div>
+                    <div><span>Empates</span><strong id="statEmpates">0</strong></div>
+                    <div><span>Taxa de vitória</span><strong id="statTaxa">0%</strong></div>
+                    <div><span>Maior combo</span><strong id="statCombo">×0</strong></div>
+                </div>
+                <div class="resultado-acoes estatisticas-acoes">
+                    <button id="btnFecharEstatisticas" class="botao-nebula">✓ Fechar</button>
+                    <button id="btnLimparEstatisticas" class="botao-nebula btn-secundario">↺ Zerar estatísticas</button>
+                </div>
+            </section>
+        </div>
+        <div id="modalResultado" class="resultado-overlay" style="display:none;" aria-hidden="true">
+            <section class="resultado-card painel-nebula" role="dialog" aria-modal="true" aria-labelledby="resultadoTitulo">
+                <div id="resultadoIcone" class="resultado-icone">🏆</div>
+                <span class="resultado-kicker">PARTIDA ENCERRADA</span>
+                <h2 id="resultadoTitulo">Vitória!</h2>
+                <p id="resultadoSubtitulo" class="resultado-subtitulo"></p>
+
+                <div class="resultado-placar">
+                    <div class="resultado-jogador resultado-azul">
+                        <span id="resultadoNome1">Jogador 1</span>
+                        <strong id="resultadoPontos1">0</strong>
+                    </div>
+                    <div class="resultado-x">×</div>
+                    <div class="resultado-jogador resultado-rosa">
+                        <span id="resultadoNome2">Jogador 2</span>
+                        <strong id="resultadoPontos2">0</strong>
+                    </div>
+                </div>
+
+                <div id="resultadoRevanche" class="resultado-revanche">
+                    <label for="resultadoTamanho">Tamanho da revanche</label>
+                    <select id="resultadoTamanho" class="input-nebula">
+                        <option value="3">3 × 3</option><option value="4">4 × 4</option>
+                        <option value="5">5 × 5</option><option value="6">6 × 6</option>
+                        <option value="8">8 × 8</option><option value="10">10 × 10</option>
+                    </select>
+                </div>
+
+                <p id="resultadoEspera" class="resultado-espera" style="display:none;">Aguardando o Jogador 1 iniciar a revanche...</p>
+
+                <div class="resultado-acoes">
+                    <button id="btnResultadoRevanche" class="botao-nebula">↻ Jogar novamente</button>
+                    <button id="btnResultadoMenu" class="botao-nebula btn-secundario">⌂ Voltar ao menu</button>
+                </div>
+            </section>
+        </div>
+
+        <!-- Botão controlado pelo JavaScript atual -->
+        <button
+            id="btnNovaPartida"
+            type="button"
+            class="botao-nebula botao-nova-partida"
+            onclick="chamarNovaPartida()"
+            style="display:none;">
+            ↻ Jogar novamente
+        </button>
+
+        <!-- ====================================================
+             ÁREA DA PARTIDA
+             ==================================================== -->
+        <section id="areaJogo" class="area-partida" style="display:none;">
+
+            <div class="hud-partida">
+
+                <div class="hud-topo">
+                    <div id="salaInfo" class="sala-info">
+                        <h2 id="codigoSala"></h2>
+                        <h3 id="status">Informe seu nome para começar</h3>
+                    </div>
+
+                    <div class="indicador-turno">
+                        <span class="indicador-pulso" aria-hidden="true"></span>
+                        <h2 id="turno">Aguardando jogadores...</h2>
+                    </div>
+
+                    <div class="controle-audio" title="Volume do jogo">
+                        <button id="btnSom" class="btn-som" type="button" title="Desativar sons" aria-label="Desativar sons">🔊</button>
+                        <input id="volumeSom" class="volume-som" type="range" min="0" max="100" step="5" value="80" aria-label="Volume dos sons">
+                        <span id="volumeValor" class="volume-valor">80%</span>
+                    </div>
+                </div>
+
+                <div id="placar" class="placar-nebula">
+
+                    <div class="jogador jogador-um">
+                        <span class="jogador-avatar" aria-hidden="true">🔵</span>
+
+                        <div class="jogador-info">
+                            <span id="nome1" class="nome-j1">Jogador 1</span>
+                            <span class="jogador-legenda">Jogador azul</span>
+                        </div>
+
+                        <span id="jogador1" class="pontuacao">0</span>
+                    </div>
+
+                    <div class="placar-versus">VS</div>
+
+                    <div class="jogador jogador-dois">
+                        <span class="jogador-avatar" aria-hidden="true">🔴</span>
+
+                        <div class="jogador-info">
+                            <span id="nome2" class="nome-j2">Jogador 2</span>
+                            <span class="jogador-legenda">Jogador rosa</span>
+                        </div>
+
+                        <span id="jogador2" class="pontuacao">0</span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="painel-tabuleiro">
+                <div class="moldura-tabuleiro">
+                    <span class="canto canto-superior-esquerdo"></span>
+                    <span class="canto canto-superior-direito"></span>
+                    <span class="canto canto-inferior-esquerdo"></span>
+                    <span class="canto canto-inferior-direito"></span>
+
+                    <div id="container-tabuleiro">
+                        <div id="tabuleiro"></div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="rodape-global">
+        <span>SMS Studio</span>
+        <span>Connecting Ideas. Creating Experiences.</span>
+    </footer>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="ia.js"></script>
-    <script src="script.js"></script>
+    <script src="js/splash.js?v=426"></script>
+    <script src="js/audio.js?v=425"></script>
+    <script src="js/audio-ui.js?v=433"></script>
+    <script src="js/ia.js"></script>
+    <script src="js/script.js?v=460"></script>
 </body>
 </html>
