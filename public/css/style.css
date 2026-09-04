@@ -2036,3 +2036,33 @@ body.grade-gigante #container-tabuleiro{
     display:flex;
     flex-direction:column;
 }
+
+
+/* ============================================================
+   BETA 1.4 — HUB BLINDADO APÓS PARTIDA
+   O conteúdo do menu fica dentro de um único wrapper. Mesmo que o
+   elemento externo receba display:flex por estado legado, os cards
+   internos não podem mais ser distribuídos horizontalmente.
+   ============================================================ */
+#menuInicial .hub-layout{
+    display:block !important;
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+}
+#menuInicial .hub-layout > .cabecalho-hub,
+#menuInicial .hub-layout > .acoes-hub,
+#menuInicial .hub-layout > .acoes-secundarias-hub,
+#menuInicial .hub-layout > .recursos-hub,
+#menuInicial .hub-layout > .rodape-painel{
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+}
+#menuInicial .hub-layout > .acoes-hub{
+    display:flex !important;
+    flex-direction:column !important;
+}
+@media (max-width:700px){
+    #menuInicial .hub-layout{width:100% !important;}
+}

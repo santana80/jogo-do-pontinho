@@ -200,6 +200,15 @@ function voltarMenuInicial() {
     menuInicial.style.removeProperty("align-items");
     menuInicial.style.removeProperty("justify-content");
     menuInicial.style.setProperty("display", "block", "important");
+
+    // Beta 1.4: o conteúdo real do HUB fica encapsulado em um único
+    // wrapper. Isto impede que estados de layout antigos distribuam
+    // os blocos do menu lado a lado após uma partida.
+    const hubLayout = menuInicial.querySelector(".hub-layout");
+    if (hubLayout) {
+        hubLayout.style.setProperty("display", "block", "important");
+        hubLayout.style.setProperty("width", "100%", "important");
+    }
 }
 
 function mostrarAreaJogo() {
