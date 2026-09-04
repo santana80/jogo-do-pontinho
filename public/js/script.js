@@ -125,16 +125,16 @@ document.getElementById("btnLimparEstatisticas").addEventListener("click", () =>
 
 document.getElementById("btnModoOnline").addEventListener("click", () => {
     modoJogo = "online";
-    menuInicial.style.display = "none";
-    menuIA.style.display = "none";
-    menuOnline.style.display = "flex";
+    menuInicial.style.setProperty("display", "none", "important");
+    menuIA.style.setProperty("display", "none", "important");
+    menuOnline.style.setProperty("display", "flex", "important");
 });
 
 document.getElementById("btnModoIA").addEventListener("click", () => {
     modoJogo = "ia";
-    menuInicial.style.display = "none";
-    menuOnline.style.display = "none";
-    menuIA.style.display = "flex";
+    menuInicial.style.setProperty("display", "none", "important");
+    menuOnline.style.setProperty("display", "none", "important");
+    menuIA.style.setProperty("display", "flex", "important");
 });
 
 document.getElementById("btnVoltarOnline").addEventListener("click", voltarMenuInicial);
@@ -183,17 +183,30 @@ atualizarDescricaoNivelIA();
 
 function voltarMenuInicial() {
     modoJogo = "";
-    menuOnline.style.display = "none";
-    menuIA.style.display = "none";
-    areaJogo.style.display = "none";
-    menuInicial.style.display = "flex";
+
+    // Ao sair de uma partida, o body pode manter classes usadas apenas
+    // para tabuleiros grandes. Limpamos esse estado antes de reconstruir
+    // visualmente o hub principal.
+    document.body.classList.remove("grade-grande", "grade-gigante");
+
+    menuOnline.style.setProperty("display", "none", "important");
+    menuIA.style.setProperty("display", "none", "important");
+    areaJogo.style.setProperty("display", "none", "important");
+
+    // Força o HUB a voltar como bloco. Em versões anteriores ele podia
+    // herdar/restaurar display:flex depois do fim da partida, espremendo
+    // todos os elementos na horizontal.
+    menuInicial.style.removeProperty("flex-direction");
+    menuInicial.style.removeProperty("align-items");
+    menuInicial.style.removeProperty("justify-content");
+    menuInicial.style.setProperty("display", "block", "important");
 }
 
 function mostrarAreaJogo() {
-    menuInicial.style.display = "none";
-    menuOnline.style.display = "none";
-    menuIA.style.display = "none";
-    areaJogo.style.display = "block";
+    menuInicial.style.setProperty("display", "none", "important");
+    menuOnline.style.setProperty("display", "none", "important");
+    menuIA.style.setProperty("display", "none", "important");
+    areaJogo.style.setProperty("display", "block", "important");
 }
 
 /* ---------------- MODO ONLINE ---------------- */
@@ -628,7 +641,9 @@ function verificarCaixas(f, c, tipo, jogador) {
     }
 
     if (!verificarFimDeJogo()) {
-        if (!ganhouPonto && window.SMSAudio) SMSAudio.turno();
+        // O som da linha já confirma a jogada. Evitamos tocar também o som de
+        // troca de turno imediatamente depois, pois no multiplayer soava como
+        // dois cliques para uma única linha marcada.
         atualizarTurno();
     }
 }
